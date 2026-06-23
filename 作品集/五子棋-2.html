@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>秋楓五子棋 | Gomoku Japanese Style</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;500;700&display=swap');
+
+        :root {
+            /* 日式傳統色彩 */
+            --bg-color: #f4eee1;       /* 溫和的和紙白 */
+            --bg-gradient: radial-gradient(circle at center, #fdfbf7 0%, #e8e0d0 100%);
+            --board-color: #dcb35c;    /* 傳統木紋黃 */
+            --board-border: #8b5a2b;   /* 深木色 */
+            --primary-dark: #7a2828;   /* 楓紅色 (蘇芳) */
+            --primary-light: #a34343;  /* 淺楓紅 */
+            --text-main: #3e2e28;      /* 墨褐色 */
+            --text-muted: #80736c;     /* 淺墨色 */
+            --win-color: #27623b;      /* 常磐綠 (勝) */
+            --lose-color: #7a2828;     /* 蘇芳紅 (敗) */
+        }
+
+        body {
+            background: var(--bg-gradient);
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: "Noto Serif TC", "PMingLiU", serif; /* 詩意的明體字型 */
+            color: var(--text-main);
+            overflow: hidden; /* 防止落葉動畫產生捲動條 */
+        }
+
+        /* 楓葉動畫容器 */
+        #leaves-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .leaf {
+            position: absolute;
+            top: -50px;
+            font-size: 24px;
+            opacity: 0;
+            filter: sepia(0.4) hue-rotate(-15deg) drop-shadow(2px 4px 4px rgba(0,0,0,0.1));
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% { 
+                transform: translate3d(0, -10vh, 0) rotate(0deg); 
+                opacity: 0; 
+            }
+            10% { 
+                opacity: 0.8; 
+            }
+            80% { 
+                opacity: 0.6; 
+            }
+            100% { 
+                transform: translate3d(calc(var(--drift) * 1vw), 110vh, 0) rotate(var(--rotate)); 
+                opacity: 0; 
+            }
+        }
+
+        /* 主容器 */
+        .container {
+            position: relative;
+            z-index: 1; /* 確保在落葉之上 */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(90, 70, 60, 0.15);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .header {
+            text-align: center;
+            letter-spacing: 4px;
+        }
+
+        h1 { 
+            margin: 0; 
+            font-weight: 700; 
+            font-size: 2.5rem; 
+            color: var(--primary-dark);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        h1::after {
+            content: "🍁";
+            font-size: 1.5rem;
+            position: absolute;
+            right: -35px;
+            top: 5px;
+            opacity: 0.8;
+        }
+
+        #status {
+            font-size: 1.2rem;
+            margin-top: 15px;
+            color: var(--text-muted);
+            height: 1.5em;
+            font-weight: 500;
+        }
+
+        /* 棋盤樣式 */
+        .board-container {
+            position: relative;
+            background: var(--board-color);
+            padding: 15px;
+            border-radius: 6px;
+            box-shadow: 
+                0 15px 35px rgba(0,0,0,0.2),
+                inset 0 0 20px rgba(139, 90, 43, 0.3);
+            border-bottom: 8px solid var(--board-border);
+            border-right: 2px solid var(--board-border);
+            border-left: 1px solid #f2cf88;
+            border-top: 1px solid #f2cf88;
+        }
+
+        canvas {
+            display: block;
+            cursor: pointer;
+        }
+
+        /* 勝負顯示層 (詩意印章風格) */
+/* 勝負顯示層 (2x2 詩意印章風格) */
+        #result-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            font-size: 3.5rem;
+            font-weight: 700;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: rgba(255, 255, 255, 0.95);
+            
+            /* 調整 Padding 抵銷字距造成的底部偏移，達到視覺完美的正方形 */
+            padding: 35px 30px 20px 30px; 
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border: 5px double var(--primary-dark); /* 雙線邊框更有傳統印章感 */
+            
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+            color: var(--primary-dark);
+            z-index: 10;
+            
+            /* 2x2 排版核心 */
+            line-height: 1.6;        /* 控制左右兩行的間距 */
+            letter-spacing: 15px;    /* 控制上下兩個字的間距 */
+        }
+        #result-overlay.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* 控制面板 (放大且優化) */
+        .controls {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        .select-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        select {
+            padding: 12px 20px;
+            font-size: 1.1rem;
+            border: 2px solid var(--board-border);
+            border-radius: 6px;
+            outline: none;
+            background-color: rgba(255, 255, 255, 0.8);
+            color: var(--text-main);
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s;
+            appearance: none; /* 隱藏預設箭頭，用自定義背景取代 */
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233e2e28' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 1em;
+            padding-right: 45px;
+        }
+
+        select:hover {
+            border-color: var(--primary-dark);
+            background-color: #fff;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            background: transparent;
+            border: 2px solid var(--primary-dark);
+            color: var(--primary-dark);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: 700;
+            font-family: inherit;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+        .btn:hover:not(:disabled) {
+            background: var(--primary-dark);
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(122, 40, 40, 0.3);
+        }
+
+        .btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            border-color: #bfa9a2;
+            color: #bfa9a2;
+            cursor: not-allowed;
+            background: rgba(255, 255, 255, 0.4);
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-primary {
+            background: var(--primary-dark);
+            color: #fff;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-light);
+            border-color: var(--primary-light);
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- 飄落的楓葉背景 -->
+<div id="leaves-container"></div>
+
+<div class="container">
+    <div class="header">
+        <h1>秋楓五子棋</h1>
+        <div id="status">選擇先行順序後開始</div>
+    </div>
+
+    <div class="board-container">
+        <div id="result-overlay"></div>
+        <canvas id="chess" width="450" height="450"></canvas>
+    </div>
+
+    <div class="controls">
+        <div class="select-group">
+            <label>執子：</label>
+            <select id="side-select">
+                <option value="black">黑子先手 (玩家)</option>
+                <option value="white">白子先手 (電腦先)</option>
+            </select>
+        </div>
+        <button class="btn btn-primary" onclick="initGame()">重新對局</button>
+        <button class="btn" id="undo-btn" onclick="undoMove()">悔棋</button>
+    </div>
+</div>
+
+<script>
+    // --- 楓葉動畫邏輯 ---
+    function createLeaves() {
+        const container = document.getElementById('leaves-container');
+        const leafCount = 25; // 楓葉數量
+        const leafIcons = ['🍁', '🍂']; // 紅葉與枯葉混合
+
+        for (let i = 0; i < leafCount; i++) {
+            let leaf = document.createElement('div');
+            leaf.classList.add('leaf');
+            leaf.innerText = leafIcons[Math.floor(Math.random() * leafIcons.length)];
+            
+            // 隨機屬性
+            let left = Math.random() * 100; // 初始水平位置 0-100vw
+            let animDuration = 10 + Math.random() * 15; // 掉落時間 10-25秒
+            let animDelay = Math.random() * 15; // 延遲時間
+            let size = 1 + Math.random() * 1.5; // 大小 1rem - 2.5rem
+            let drift = (Math.random() * 40 - 20); // 左右飄移幅度 -20 到 20vw
+            let rotateEnd = (Math.random() * 720 - 360) + 'deg'; // 旋轉角度
+
+            leaf.style.left = left + 'vw';
+            leaf.style.animationDuration = animDuration + 's';
+            leaf.style.animationDelay = animDelay + 's';
+            leaf.style.fontSize = size + 'rem';
+            
+            // 傳遞變數給 CSS Keyframes
+            leaf.style.setProperty('--drift', drift);
+            leaf.style.setProperty('--rotate', rotateEnd);
+            
+            container.appendChild(leaf);
+        }
+    }
+    
+    // 初始化楓葉
+    createLeaves();
+
+    // --- 遊戲邏輯 ---
+    const canvas = document.getElementById('chess');
+    const context = canvas.getContext('2d');
+    const statusText = document.getElementById('status');
+    const resultOverlay = document.getElementById('result-overlay');
+    const undoBtn = document.getElementById('undo-btn');
+    
+    let chessBoard = [];
+    let me = true; // 玩家是否落子
+    let playerColor = 1; // 1:黑, 2:白
+    let over = false;
+    let history = []; // 用於悔棋
+    let wins = [];
+    let count = 0;
+    let myWin = [];
+    let computerWin = [];
+
+    // 初始化贏法陣列 (只需運行一次)
+    function initWinLogic() {
+        for (let i = 0; i < 15; i++) {
+            wins[i] = [];
+            for (let j = 0; j < 15; j++) wins[i][j] = [];
+        }
+        count = 0;
+        // 橫線
+        for (let i = 0; i < 15; i++) {
+            for (let j = 0; j < 11; j++) {
+                for (let k = 0; k < 5; k++) wins[i][j + k][count] = true;
+                count++;
+            }
+        }
+        // 直線
+        for (let i = 0; i < 15; i++) {
+            for (let j = 0; j < 11; j++) {
+                for (let k = 0; k < 5; k++) wins[j + k][i][count] = true;
+                count++;
+            }
+        }
+        // 正斜線
+        for (let i = 0; i < 11; i++) {
+            for (let j = 0; j < 11; j++) {
+                for (let k = 0; k < 5; k++) wins[i + k][j + k][count] = true;
+                count++;
+            }
+        }
+        // 反斜線
+        for (let i = 0; i < 11; i++) {
+            for (let j = 14; j > 3; j--) {
+                for (let k = 0; k < 5; k++) wins[i + k][j - k][count] = true;
+                count++;
+            }
+        }
+    }
+
+    function initGame() {
+        const side = document.getElementById('side-select').value;
+        chessBoard = Array.from({length: 15}, () => new Array(15).fill(0));
+        myWin = new Array(count).fill(0);
+        computerWin = new Array(count).fill(0);
+        history = [];
+        over = false;
+        
+        resultOverlay.classList.remove('show');
+        statusText.innerText = side === 'black' ? "您的回合 (執黑)" : "電腦沉思中...";
+        
+        drawBoard();
+        
+        if (side === 'black') {
+            me = true;
+            playerColor = 1;
+        } else {
+            me = false;
+            playerColor = 2;
+            setTimeout(computerAI, 600);
+        }
+        updateUndoBtn();
+    }
+
+    function drawBoard() {
+        context.clearRect(0, 0, 450, 450);
+        context.beginPath();
+        context.strokeStyle = "rgba(100, 65, 30, 0.7)"; /* 柔和的線條色 */
+        context.lineWidth = 1.2;
+        
+        for (let i = 0; i < 15; i++) {
+            context.moveTo(15 + i * 30, 15);
+            context.lineTo(15 + i * 30, 435);
+            context.stroke();
+            context.moveTo(15, 15 + i * 30);
+            context.lineTo(435, 15 + i * 30);
+            context.stroke();
+        }
+
+        // 畫天元與星位 (圍棋/五子棋傳統的黑點)
+        const stars = [
+            [3, 3], [11, 3], [3, 11], [11, 11], [7, 7]
+        ];
+        context.fillStyle = "rgba(100, 65, 30, 0.9)";
+        stars.forEach(([i, j]) => {
+            context.beginPath();
+            context.arc(15 + i * 30, 15 + j * 30, 4, 0, 2 * Math.PI);
+            context.fill();
+        });
+    }
+
+    function drawPiece(i, j, isBlack) {
+        context.beginPath();
+        context.arc(15 + i * 30, 15 + j * 30, 13, 0, 2 * Math.PI);
+        // 使棋子具有玉石或和風啞光的漸層質感
+        let g = context.createRadialGradient(15+i*30+3, 15+j*30-3, 13, 15+i*30+3, 15+j*30-3, 0);
+        if (isBlack) {
+            g.addColorStop(0, "#2c2c2c");
+            g.addColorStop(1, "#050505");
+        } else {
+            g.addColorStop(0, "#fdfdfd");
+            g.addColorStop(1, "#d1d1d1");
+        }
+        context.fillStyle = g;
+        context.fill();
+        
+        // 加上微小的陰影增強立體感
+        context.shadowColor = 'rgba(0, 0, 0, 0.3)';
+        context.shadowBlur = 4;
+        context.shadowOffsetX = 2;
+        context.shadowOffsetY = 2;
+        context.fill();
+        context.shadowColor = 'transparent'; // 重置陰影避免影響畫線
+    }
+
+    canvas.onclick = function(e) {
+        if (over || !me) return;
+        let i = Math.floor(e.offsetX / 30);
+        let j = Math.floor(e.offsetY / 30);
+
+        if (chessBoard[i][j] === 0) {
+            step(i, j, true);
+            if (!over) {
+                me = false;
+                statusText.innerText = "電腦沉思中...";
+                setTimeout(computerAI, 500); // 加入微小延遲讓電腦感覺在「思考」
+            }
+        }
+    };
+
+    function step(i, j, isPlayer) {
+        const isBlack = (isPlayer && playerColor === 1) || (!isPlayer && playerColor === 2);
+        drawPiece(i, j, isBlack);
+        chessBoard[i][j] = isPlayer ? 1 : 2;
+        
+        // 紀錄歷史
+        history.push({
+            i, j, isPlayer, 
+            myWinBefore: [...myWin], 
+            compWinBefore: [...computerWin]
+        });
+        updateUndoBtn();
+
+        for (let k = 0; k < count; k++) {
+            if (wins[i][j][k]) {
+                if (isPlayer) {
+                    myWin[k]++;
+                    computerWin[k] = 6;
+                    if (myWin[k] === 5) showEnd("WIN");
+                } else {
+                    computerWin[k]++;
+                    myWin[k] = 6;
+                    if (computerWin[k] === 5) showEnd("LOSE");
+                }
+            }
+        }
+    }
+
+    function undoMove() {
+        if (history.length < 2 || over) return;
+
+        // 退回兩次 (電腦一次 + 玩家一次)
+        for(let n = 0; n < 2; n++) {
+            let last = history.pop();
+            chessBoard[last.i][last.j] = 0;
+            myWin = last.myWinBefore;
+            computerWin = last.compWinBefore;
+        }
+
+        // 重繪棋盤與剩餘棋子
+        drawBoard();
+        for(let i=0; i<15; i++) {
+            for(let j=0; j<15; j++) {
+                if(chessBoard[i][j] !== 0) {
+                    const isStepPlayer = chessBoard[i][j] === 1;
+                    const isStepBlack = (isStepPlayer && playerColor === 1) || (!isStepPlayer && playerColor === 2);
+                    drawPiece(i, j, isStepBlack);
+                }
+            }
+        }
+        
+        over = false;
+        me = true;
+        resultOverlay.classList.remove('show');
+        statusText.innerText = "已悔棋，請落子";
+        updateUndoBtn();
+    }
+
+    function updateUndoBtn() {
+        undoBtn.disabled = history.length < 2 || over;
+    }
+
+function showEnd(msg) {
+        over = true;
+        
+        // 透過 <br> 斷行，配合 vertical-rl 自動形成「右欄先、左欄後」的 2x2 排版
+        const text = msg === "WIN" ? "大獲<br>全勝" : "遺憾<br>敗北";
+        resultOverlay.innerHTML = text; // 注意這裡改成 innerHTML
+        
+        resultOverlay.style.color = msg === "WIN" ? "var(--win-color)" : "var(--lose-color)";
+        resultOverlay.style.borderColor = msg === "WIN" ? "var(--win-color)" : "var(--lose-color)";
+        
+        resultOverlay.classList.add('show');
+        statusText.innerText = msg === "WIN" ? "勝負已分，恭喜獲勝！" : "勝負已分，再接再厲。";
+        updateUndoBtn();
+    }
+    
+    function computerAI() {
+        if (over) return;
+        let myScore = Array.from({length: 15}, () => new Array(15).fill(0));
+        let computerScore = Array.from({length: 15}, () => new Array(15).fill(0));
+        let max = 0;
+        let u = 7, v = 7; 
+
+        for (let i = 0; i < 15; i++) {
+            for (let j = 0; j < 15; j++) {
+                if (chessBoard[i][j] === 0) {
+                    for (let k = 0; k < count; k++) {
+                        if (wins[i][j][k]) {
+                            if (myWin[k] === 1) myScore[i][j] += 200;
+                            else if (myWin[k] === 2) myScore[i][j] += 400;
+                            else if (myWin[k] === 3) myScore[i][j] += 2000;
+                            else if (myWin[k] === 4) myScore[i][j] += 10000;
+                            
+                            if (computerWin[k] === 1) computerScore[i][j] += 220;
+                            else if (computerWin[k] === 2) computerScore[i][j] += 420;
+                            else if (computerWin[k] === 3) computerScore[i][j] += 2100;
+                            else if (computerWin[k] === 4) computerScore[i][j] += 20000;
+                        }
+                    }
+                    if (myScore[i][j] > max) { max = myScore[i][j]; u = i; v = j; }
+                    else if (myScore[i][j] === max && computerScore[i][j] > computerScore[u][v]) { u = i; v = j; }
+                    
+                    if (computerScore[i][j] > max) { max = computerScore[i][j]; u = i; v = j; }
+                    else if (computerScore[i][j] === max && myScore[i][j] > myScore[u][v]) { u = i; v = j; }
+                }
+            }
+        }
+        
+        step(u, v, false);
+        if (!over) {
+            me = true;
+            statusText.innerText = "您的回合 (" + (playerColor === 1 ? "執黑" : "執白") + ")";
+        }
+    }
+
+    // 啟動
+    initWinLogic();
+    initGame();
+</script>
+
+</body>
+</html>

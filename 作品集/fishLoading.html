@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>魔法海洋 Loading</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    overflow:hidden;
+
+    font-family:
+    "jf-openhuninn",
+    "粉圓體",
+    "Microsoft JhengHei",
+    sans-serif;
+
+    background:
+    linear-gradient(
+        180deg,
+        #f7fbff 0%,
+        #dff4ff 45%,
+        #c7ecff 100%
+    );
+}
+
+/* ================= */
+/* Loading 遮罩 */
+/* ================= */
+
+.loading-container{
+    position:fixed;
+    inset:0;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+
+    overflow:hidden;
+
+    transition:
+    opacity .8s ease,
+    visibility .8s ease;
+
+    z-index:9999;
+}
+
+.fade-out{
+    opacity:0;
+    visibility:hidden;
+}
+
+/* ================= */
+/* 魔法粒子 */
+/* ================= */
+
+.sparkle{
+    position:absolute;
+
+    width:4px;
+    height:4px;
+
+    background:white;
+
+    border-radius:50%;
+
+    animation:
+    sparkleFloat linear infinite;
+}
+
+@keyframes sparkleFloat{
+
+    from{
+        transform:
+        translateY(100vh)
+        scale(0);
+
+        opacity:0;
+    }
+
+    20%{
+        opacity:1;
+    }
+
+    to{
+        transform:
+        translateY(-100px)
+        scale(1);
+
+        opacity:0;
+    }
+}
+
+/* ================= */
+/* 水缸 */
+/* ================= */
+
+.water-tank{
+    position:relative;
+
+    width:220px;
+    height:220px;
+
+    border-radius:50%;
+
+    overflow:hidden;
+
+    background:white;
+
+    border:8px solid #bde9ff;
+
+    box-shadow:
+    0 0 30px rgba(56,189,248,.35),
+    0 0 60px rgba(56,189,248,.2),
+    0 15px 40px rgba(0,0,0,.08);
+
+    animation:
+    tankFloat 4s ease-in-out infinite;
+}
+
+@keyframes tankFloat{
+    0%,100%{
+        transform:translateY(0);
+    }
+
+    50%{
+        transform:translateY(-5px);
+    }
+}
+
+.success{
+    animation:
+    splash .8s ease;
+}
+
+@keyframes splash{
+
+    0%{
+        transform:scale(1);
+    }
+
+    30%{
+        transform:scale(1.08);
+    }
+
+    100%{
+        transform:scale(1);
+    }
+}
+
+/* ================= */
+/* 水 */
+/* ================= */
+
+.water-base{
+    position:absolute;
+
+    left:0;
+    bottom:0;
+
+    width:100%;
+    height:0%;
+
+    background:
+    linear-gradient(
+        180deg,
+        #67d5ff,
+        #2ab7ff
+    );
+
+    transition:height .05s linear;
+}
+
+/* 波浪 */
+
+.wave{
+    position:absolute;
+
+    top:-12px;
+    left:-50%;
+
+    width:200%;
+    height:25px;
+
+    background:
+    rgba(255,255,255,.4);
+
+    border-radius:45%;
+
+    animation:
+    waveMove linear infinite;
+}
+
+.wave1{
+    animation-duration:4s;
+}
+
+.wave2{
+    animation-duration:6s;
+    opacity:.5;
+}
+
+@keyframes waveMove{
+
+    from{
+        transform:translateX(0);
+    }
+
+    to{
+        transform:translateX(-25%);
+    }
+}
+
+/* ================= */
+/* 泡泡 */
+/* ================= */
+
+.bubble{
+    position:absolute;
+
+    bottom:10px;
+
+    border-radius:50%;
+
+    background:
+    rgba(255,255,255,.65);
+
+    animation:
+    rise 4s infinite;
+}
+
+.b1{
+    width:8px;
+    height:8px;
+    left:40px;
+}
+
+.b2{
+    width:12px;
+    height:12px;
+    left:80px;
+    animation-delay:1s;
+}
+
+.b3{
+    width:10px;
+    height:10px;
+    right:40px;
+    animation-delay:2s;
+}
+
+.b4{
+    width:6px;
+    height:6px;
+    right:80px;
+    animation-delay:.5s;
+}
+
+@keyframes rise{
+
+    from{
+        transform:translateY(0);
+        opacity:0;
+    }
+
+    20%{
+        opacity:1;
+    }
+
+    to{
+        transform:translateY(-180px);
+        opacity:0;
+    }
+}
+
+/* ================= */
+/* 小烏賊 */
+/* ================= */
+
+.squid{
+    position:absolute;
+
+    left:50%;
+    bottom:20px;
+
+    transform:translateX(-50%);
+
+    width:70px;
+    height:95px;
+
+    z-index:10;
+
+    transition:
+    bottom .05s linear;
+
+    animation:
+    float 2s ease-in-out infinite;
+}
+
+@keyframes float{
+
+    0%,100%{
+        transform:
+        translateX(-50%)
+        translateY(0);
+    }
+
+    50%{
+        transform:
+        translateX(-50%)
+        translateY(-8px);
+    }
+}
+
+.squid-head{
+    width:70px;
+    height:70px;
+
+    background:#ff839a;
+
+    border-radius:
+    35px 35px 18px 18px;
+
+    position:relative;
+}
+
+.eyes{
+    position:absolute;
+
+    top:32px;
+
+    width:8px;
+    height:8px;
+
+    background:#333;
+
+    border-radius:50%;
+
+    animation:
+    blink 5s infinite;
+}
+
+.eyes.left{
+    left:18px;
+}
+
+.eyes.right{
+    right:18px;
+}
+
+@keyframes blink{
+
+    0%,96%,100%{
+        transform:scaleY(1);
+    }
+
+    98%{
+        transform:scaleY(.1);
+    }
+}
+
+.blush{
+    position:absolute;
+
+    width:10px;
+    height:5px;
+
+    background:#ff839a;
+
+    border-radius:50%;
+
+    top:40px;
+}
+
+.blush.left{
+    left:8px;
+}
+
+.blush.right{
+    right:8px;
+}
+
+.tentacles{
+    display:flex;
+    justify-content:space-around;
+
+    margin-top:-5px;
+}
+
+.tentacle{
+    width:8px;
+    height:28px;
+
+    background:#ff839a;
+
+    border-radius:0 0 4px 4px;
+
+    animation:
+    swim .8s ease-in-out infinite alternate;
+}
+
+.tentacle:nth-child(2),
+.tentacle:nth-child(4){
+    animation-delay:.15s;
+}
+
+@keyframes swim{
+
+    from{
+        transform:scaleY(.8);
+    }
+
+    to{
+        transform:scaleY(1.2);
+    }
+}
+
+/* ================= */
+/* 文字 */
+/* ================= */
+
+.loading-text{
+
+    margin-top:30px;
+
+    color:#0284c7;
+
+    font-weight:700;
+
+    font-size:18px;
+
+    letter-spacing:2px;
+
+    text-shadow:
+    0 2px 10px rgba(56,189,248,.3);
+}
+
+.loading-percent{
+
+    margin-top:10px;
+
+    color:#0ea5e9;
+
+    font-size:28px;
+
+    font-weight:900;
+}
+
+.sub-text{
+
+    margin-top:8px;
+
+    color:#5b9cc5;
+
+    font-size:14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="loading-container" id="loadingMask">
+
+    <!-- 粒子 -->
+    <div id="particles"></div>
+
+    <div class="water-tank" id="waterTank">
+
+        <div class="water-base" id="waterLevel">
+
+            <div class="wave wave1"></div>
+            <div class="wave wave2"></div>
+
+        </div>
+
+        <div class="bubble b1"></div>
+        <div class="bubble b2"></div>
+        <div class="bubble b3"></div>
+        <div class="bubble b4"></div>
+
+        <div class="squid" id="squid">
+
+            <div class="squid-head">
+
+                <div class="eyes left"></div>
+                <div class="eyes right"></div>
+
+                <div class="blush left"></div>
+                <div class="blush right"></div>
+
+            </div>
+
+            <div class="tentacles">
+                <div class="tentacle"></div>
+                <div class="tentacle"></div>
+                <div class="tentacle"></div>
+                <div class="tentacle"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="loading-text">
+        海水注入中...
+    </div>
+
+    <div class="loading-percent" id="loadingPercent">
+        0%
+    </div>
+
+    <div class="sub-text">
+        快好了...
+    </div>
+
+</div>
+
+<script>
+
+const waterLevel =
+document.getElementById("waterLevel");
+
+const squid =
+document.getElementById("squid");
+
+const percent =
+document.getElementById("loadingPercent");
+
+const tank =
+document.getElementById("waterTank");
+
+const loadingMask =
+document.getElementById("loadingMask");
+
+/* ================= */
+/* 魔法粒子 */
+/* ================= */
+
+for(let i=0;i<35;i++){
+
+    const star =
+    document.createElement("div");
+
+    star.className = "sparkle";
+
+    star.style.left =
+    Math.random()*100 + "%";
+
+    star.style.animationDuration =
+    5 + Math.random()*10 + "s";
+
+    star.style.animationDelay =
+    Math.random()*10 + "s";
+
+    document.body.appendChild(star);
+}
+
+/* ================= */
+/* Loading */
+/* ================= */
+
+let progress = 0;
+
+const interval =
+setInterval(()=>{
+
+    progress++;
+
+    waterLevel.style.height =
+    progress + "%";
+
+    squid.style.bottom =
+    20 + (progress * 1.25) + "px";
+
+    percent.textContent =
+    progress + "%";
+
+    if(progress >= 100){
+
+        clearInterval(interval);
+
+        tank.classList.add("success");
+
+        document.querySelector(".loading-text")
+        .textContent =
+        "準備完成！";
+
+        document.querySelector(".sub-text")
+        .textContent =
+        "我來找你嚕";
+
+        setTimeout(()=>{
+
+            loadingMask.classList.add("fade-out");
+
+        },1500);
+    }
+
+},50);
+
+</script>
+
+</body>
+</html>
