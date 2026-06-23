@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>視覺辨識實驗室 - 色弱挑戰</title>
+    <style>
+        :root {
+            --bg: #050508;
+            --accent: #00f2fe;
+            --warn: #ff2d55;
+            --card-bg: rgba(255, 255, 255, 0.05);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "PingFang TC", "Microsoft JhengHei", sans-serif; }
+
+        body {
+            background: radial-gradient(circle at center, #1b2735 0%, var(--bg) 100%);
+            color: #fff;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .game-wrapper {
+            width: 92%;
+            max-width: 420px;
+            padding: 25px;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 0.9rem;
+            letter-spacing: 6px;
+            margin-bottom: 20px;
+            color: var(--accent);
+            opacity: 0.8;
+            text-transform: uppercase;
+        }
+
+        /* 儀錶板：防止跑版排版 */
+        .dashboard {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .info-box { flex: 1; }
+        .info-box.left { text-align: left; }
+        .info-box.right { text-align: right; }
+
+        .label { font-size: 0.75rem; color: #777; display: block; margin-bottom: 4px; }
+        .value { font-size: clamp(1.2rem, 5vw, 1.6rem); font-weight: bold; font-family: monospace; }
+
+        .timer-center {
+            flex: 1.5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #timer {
+            font-size: clamp(3rem, 12vw, 4rem);
+            font-weight: 900;
+            line-height: 1;
+            color: #fff;
+            text-shadow: 0 0 15px var(--accent);
+        }
+
+        .progress-container {
+            width: 80%;
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        #progress-bar {
+            width: 100%;
+            height: 100%;
+            background: var(--accent);
+            transition: width 1s linear, background 0.3s;
+        }
+
+        /* 遊戲區域 */
+        #game-board {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            background: rgba(0,0,0,0.25);
+            border-radius: 20px;
+            padding: 12px;
+            display: grid;
+            gap: 8px;
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.4);
+        }
+
+        #start-mask {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 20px;
+            z-index: 10;
+            backdrop-filter: blur(8px);
+        }
+
+        .block {
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .block:active { transform: scale(0.92); }
+
+        .btn {
+            padding: 16px 40px;
+            background: var(--accent);
+            color: #000;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.4);
+            transition: 0.3s;
+        }
+        .btn:hover { transform: scale(1.05); filter: brightness(1.1); }
+
+        /* 錯誤震動 */
+        .shake { animation: shakeEffect 0.4s; }
+        @keyframes shakeEffect {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); border: 2px solid var(--warn); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
+        /* 結算畫面 */
+        #overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.95);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            padding: 30px;
+        }
+
+        .rank-title {
+            font-size: clamp(3.5rem, 15vw, 5.5rem);
+            font-weight: 900;
+            margin: 20px 0;
+            background: linear-gradient(to bottom, #fff, var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 20px var(--accent));
+            text-align: center;
+        }
+
+        .hidden { display: none !important; }
+
+    </style>
+</head>
+<body>
+
+<div class="game-wrapper">
+    <h1>Vision Intelligence</h1>
+    
+    <div class="dashboard">
+        <div class="info-box left">
+            <span class="label">關卡</span>
+            <span id="lvl" class="value">01</span>
+        </div>
+        <div class="timer-center">
+            <div id="timer">30</div>
+            <div class="progress-container">
+                <div id="progress-bar"></div>
+            </div>
+        </div>
+        <div class="info-box right">
+            <span class="label">分數</span>
+            <span id="score" class="value">0</span>
+        </div>
+    </div>
+
+    <div id="game-board">
+        <div id="start-mask">
+            <button class="btn" onclick="startGame()">開始測試</button>
+        </div>
+    </div>
+</div>
+
+<div id="overlay">
+    <p style="letter-spacing: 4px; color: #aaa;">辨識分析報告</p>
+    <div id="rank-name" class="rank-title">---</div>
+    <p style="font-size: 1.2rem; margin-bottom: 40px;">最終得分：<span id="final-score" style="color:var(--accent); font-weight:bold;">0</span></p>
+    <button class="btn" onclick="location.reload()">重新挑戰</button>
+</div>
+
+<script>
+    const el = {
+        board: document.getElementById('game-board'),
+        timer: document.getElementById('timer'),
+        progress: document.getElementById('progress-bar'),
+        lvl: document.getElementById('lvl'),
+        score: document.getElementById('score'),
+        mask: document.getElementById('start-mask'),
+        overlay: document.getElementById('overlay'),
+        rank: document.getElementById('rank-name'),
+        finalScore: document.getElementById('final-score')
+    };
+
+    let game = {
+        level: 1,
+        score: 0,
+        timeLeft: 30,
+        active: false,
+        timerId: null
+    };
+
+    function startGame() {
+        game.active = true;
+        el.mask.classList.add('hidden');
+        renderBoard();
+        startTimer();
+    }
+
+    function startTimer() {
+        game.timerId = setInterval(() => {
+            game.timeLeft--;
+            el.timer.textContent = game.timeLeft.toString().padStart(2, '0');
+            
+            // 進度條與顏色邏輯
+            const percent = (game.timeLeft / 30) * 100;
+            el.progress.style.width = percent + '%';
+            
+            if (game.timeLeft <= 5) {
+                el.timer.style.color = 'var(--warn)';
+                el.progress.style.background = 'var(--warn)';
+            }
+
+            if (game.timeLeft <= 0) endGame();
+        }, 1000);
+    }
+
+    function renderBoard() {
+        // 清除舊色塊
+        const currentBlocks = el.board.querySelectorAll('.block');
+        currentBlocks.forEach(b => b.remove());
+
+        // 難度公式：1-2關(2x2), 3-4關(3x3)... 最高 10x10
+        const size = Math.min(Math.floor((game.level + 1) / 2) + 1, 10);
+        el.board.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+
+        // 顏色演算法
+        const h = Math.floor(Math.random() * 360);
+        const s = 50 + Math.random() * 20;
+        const l = 40 + Math.random() * 20;
+        // 隨關卡增加，色差縮小
+        const diff = Math.max(1.2, 14 - (game.level * 1.2)); 
+
+        const total = size * size;
+        const specialIdx = Math.floor(Math.random() * total);
+
+        for (let i = 0; i < total; i++) {
+            const block = document.createElement('div');
+            block.className = 'block';
+            
+            if (i === specialIdx) {
+                block.style.backgroundColor = `hsl(${h}, ${s}%, ${l + diff}%)`;
+                block.onclick = (e) => {
+                    e.stopPropagation();
+                    nextLevel();
+                };
+            } else {
+                block.style.backgroundColor = `hsl(${h}, ${s}%, ${l}%)`;
+                block.onclick = (e) => {
+                    e.stopPropagation();
+                    wrongClick();
+                };
+            }
+            el.board.appendChild(block);
+        }
+    }
+
+    function nextLevel() {
+        if (!game.active) return;
+        game.score += game.level * 25; // 基礎得分
+        if (game.level < 10) game.level++;
+        el.lvl.textContent = game.level.toString().padStart(2, '0');
+        el.score.textContent = game.score;
+        renderBoard();
+    }
+
+    function wrongClick() {
+        if (!game.active) return;
+        el.board.classList.add('shake');
+        setTimeout(() => el.board.classList.remove('shake'), 400);
+        game.timeLeft = Math.max(0, game.timeLeft - 3); // 罰扣3秒
+        el.timer.textContent = game.timeLeft.toString().padStart(2, '0');
+    }
+
+    function getRank(s) {
+        if (s >= 1300) return "視覺之神";
+        if (s >= 951)  return "高空老鷹";
+        if (s >= 651)  return "敏捷獵犬";
+        if (s >= 351)  return "都市人類";
+        if (s >= 101)  return "叢林小猴子";
+        if (s >= 1)    return "單細胞草履蟲";
+        return "你是色盲";
+    }
+
+    function endGame() {
+        game.active = false;
+        clearInterval(game.timerId);
+        el.finalScore.textContent = game.score;
+        el.rank.textContent = getRank(game.score);
+        el.overlay.style.display = 'flex';
+    }
+</script>
+
+</body>
+</html>

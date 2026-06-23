@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>葉真伶 Lynn | 個人作品集 Portfolio</title>
+    <!-- 引入 FontAwesome 圖示庫 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- 基礎變數與色彩 --- */
+        :root {
+            --text-main: #3d3d3d;
+            --text-light: #666666;
+            --accent-color: #8fa8c8;
+            /* 柔美莫蘭迪藍 */
+            --accent-hover: #7a94b5;
+            --card-radius: 24px;
+            --transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* --- 淺色水彩畫感背景 --- */
+        body {
+            font-family: "PingFang TC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            color: var(--text-main);
+            line-height: 1.7;
+            background-color: #faf9f7;
+            background-image:
+                radial-gradient(at 10% 20%, rgba(228, 240, 255, 0.6) 0px, transparent 50%),
+                radial-gradient(at 80% 0%, rgba(255, 239, 225, 0.6) 0px, transparent 50%),
+                radial-gradient(at 40% 80%, rgba(240, 225, 255, 0.5) 0px, transparent 50%),
+                radial-gradient(at 90% 90%, rgba(225, 250, 235, 0.5) 0px, transparent 50%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        /* --- 導覽列 Navigation --- */
+        header {
+            background-color: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 1.2rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.1rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            color: var(--text-main);
+        }
+
+        nav a {
+            color: var(--text-light);
+            text-decoration: none;
+            margin-left: 2rem;
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        nav a:hover,
+        nav a.active {
+            color: var(--accent-color);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 50%;
+            background-color: var(--accent-color);
+            transition: var(--transition);
+            transform: translateX(-50%);
+        }
+
+        nav a.active::after {
+            width: 100%;
+        }
+
+        /* --- 主要內容區與路由 --- */
+        main {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 400;
+            margin-bottom: 2.5rem;
+            letter-spacing: 2px;
+            color: var(--text-main);
+        }
+
+        /* --- 玻璃質感卡片共用樣式 --- */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: var(--card-radius);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.03);
+            transition: var(--transition);
+        }
+
+        /* --- 1. 關於我 --- */
+        .about-layout {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 4rem 3rem;
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .avatar-img {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #fff;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+            margin-bottom: 1.5rem;
+            background-color: #eee;
+        }
+
+        .about-name {
+            font-size: 2.2rem;
+            font-weight: 500;
+            line-height: 1.3;
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+        }
+
+        .about-name span {
+            display: block;
+            font-size: 1.4rem;
+            font-weight: 300;
+            color: var(--accent-color);
+            margin-top: 0.2rem;
+        }
+
+        .profile-meta {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .profile-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .profile-meta a {
+            color: var(--text-light);
+            text-decoration: none;
+        }
+
+        .profile-meta a:hover {
+            color: var(--accent-color);
+        }
+
+        .resume-section {
+            margin-bottom: 2.5rem;
+        }
+
+        .resume-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .resume-h3 {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: var(--text-main);
+            border-left: 3px solid var(--accent-color);
+            padding-left: 0.8rem;
+            margin-bottom: 1.2rem;
+            letter-spacing: 1px;
+        }
+
+        .intro-p {
+            color: var(--text-main);
+            text-align: justify;
+            font-size: 1rem;
+        }
+
+        .trait-container {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .trait-tag {
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(143, 168, 200, 0.3);
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .timeline-item {
+            margin-bottom: 1.5rem;
+            background: rgba(255, 255, 255, 0.3);
+            padding: 1.2rem;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .timeline-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-title {
+            font-size: 1.05rem;
+            font-weight: 500;
+        }
+
+        .timeline-company {
+            font-size: 0.95rem;
+            color: var(--accent-color);
+            margin-left: 0.5rem;
+            font-weight: 400;
+        }
+
+        .timeline-date {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .timeline-bullets {
+            list-style: none;
+            padding-left: 0.5rem;
+        }
+
+        .timeline-bullets li {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            position: relative;
+            padding-left: 1rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .timeline-bullets li::before {
+            content: "•";
+            color: var(--accent-color);
+            position: absolute;
+            left: 0;
+        }
+
+        /* --- 2. 技能頁面 (極致整齊優化版) --- */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 2rem;
+            align-items: stretch;
+        }
+
+        .skill-card {
+            padding: 2.5rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .skill-card:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+        .skill-icon {
+            font-size: 2.3rem;
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+        }
+
+        .skill-card h3 {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: var(--text-main);
+            letter-spacing: 1px;
+            margin-bottom: 0.8rem;
+            text-align: center;
+        }
+
+        .skill-divider {
+            width: 40px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
+            margin-bottom: 1.5rem;
+        }
+
+        .skill-list {
+            list-style: none;
+            color: var(--text-light);
+            font-size: 1.05rem;
+            width: fit-content;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .skill-list li {
+            font-weight: 400;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            white-space: nowrap;
+        }
+
+        .skill-list li::before {
+            content: '';
+            display: inline-block;
+            width: 5px;
+            height: 5px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        /* --- 3. 作品集頁面 --- */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .portfolio-link-wrapper {
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+        }
+
+        .portfolio-card {
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .portfolio-link-wrapper:hover .portfolio-card {
+            transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.7);
+            box-shadow: 0 16px 45px rgba(0, 0, 0, 0.08);
+        }
+
+        .p-img-container {
+            height: 200px;
+            background: rgba(255, 255, 255, 0.4);
+            background-position: top;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+            /* position: relative; */
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .p-img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .portfolio-link-wrapper:hover .p-img-container img {
+            transform: scale(1.05);
+        }
+
+
+        .p-fallback-icon {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            font-size: 1.5rem;
+            color: #2c3e50;
+            z-index: 2;
+        }
+
+        .p-content {
+            padding: 2rem;
+            flex-grow: 1;
+        }
+
+        .p-tag {
+            display: inline-block;
+            font-size: 0.8rem;
+            background-color: rgba(143, 168, 200, 0.15);
+            color: var(--accent-color);
+            padding: 0.3rem 0.8rem;
+            border-radius: 50px;
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+        }
+
+        .p-content h3 {
+            font-size: 1.25rem;
+            font-weight: 500;
+            margin-bottom: 0.8rem;
+            line-height: 1.4;
+        }
+
+        .p-content p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            text-align: justify;
+        }
+
+        .p-footer {
+            margin-top: 1.5rem;
+            text-align: right;
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .portfolio-link-wrapper:hover .p-footer {
+            color: var(--accent-hover);
+            transform: translateX(3px);
+        }
+
+        /* 手機板響應式調整 */
+        @media (max-width: 600px) {
+            .profile-meta {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .timeline-header {
+                flex-direction: column;
+                gap: 0.2rem;
+            }
+
+            .timeline-company {
+                margin-left: 0;
+                display: block;
+            }
+
+            .about-layout {
+                padding: 2.5rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- 導覽列 -->
+    <header>
+        <div class="nav-container">
+            <div class="logo">LYNN YEH</div>
+            <nav>
+                <a href="#about" id="link-about">關於我</a>
+                <a href="#skills" id="link-skills">技能</a>
+                <a href="#portfolio" id="link-portfolio">作品集</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 主要內容區 -->
+    <main>
+
+        <!-- 1. 關於我頁面 -->
+        <section id="about" class="page">
+            <div class="glass-card about-layout">
+                <div class="profile-header">
+                    <img src="photo.jpg" alt="葉真伶 Lynn" class="avatar-img" onerror="this.style.display='none';">
+                    <h2 class="about-name">葉真伶<span>Lynn</span></h2>
+
+                    <div class="profile-meta">
+                        <span><i class="fa-solid fa-location-dot"></i> 台中</span>
+                        <span><i class="fa-solid fa-graduation-cap"></i> 亞洲大學 食品保健系</span>
+                        <span><i class="fa-solid fa-envelope"></i> <a
+                                href="mailto:seleneyabe@gmail.com">seleneyabe@gmail.com</a></span>
+                        <span><i class="fa-solid fa-phone"></i> 0987-666-023</span>
+                    </div>
+                </div>
+
+                <div class="resume-section">
+                    <h3 class="resume-h3">個人簡介</h3>
+                    <p class="intro-p">
+                        喜歡接觸新領域並持續學習新技能，對 UI/UX 設計充滿興趣。目前持續精進設計與前端相關能力，未來期許透過實際專案累積經驗，設計出兼具美感、功能性的產品，創造更好的使用者體驗。
+                    </p>
+                </div>
+
+                <div class="resume-section">
+                    <h3 class="resume-h3">性格特點</h3>
+                    <div class="trait-container">
+                        <span class="trait-tag"><i class="fa-solid fa-eye"></i> 細心觀察</span>
+                        <span class="trait-tag"><i class="fa-solid fa-lightbulb"></i> 問題解決</span>
+                        <span class="trait-tag"><i class="fa-solid fa-check"></i> 責任感</span>
+                    </div>
+                </div>
+
+                <div class="resume-section">
+                    <h3 class="resume-h3">工作經驗</h3>
+
+                    <div class="timeline-item">
+                        <div class="timeline-header">
+                            <span class="timeline-title">行政助理 <span class="timeline-company">| 台灣脈動</span></span>
+                            <span class="timeline-date">2025年10月 - 2026年3月</span>
+                        </div>
+                        <ul class="timeline-bullets">
+                            <li>行政事務與文件管理</li>
+                            <li>會議安排及跨部門協調</li>
+                            <li>員工出勤及報表製作</li>
+                        </ul>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-header">
+                            <span class="timeline-title">品管助理 <span class="timeline-company">| 保健食品廠</span></span>
+                            <span class="timeline-date">2024年8月 - 2025年1月</span>
+                        </div>
+                        <ul class="timeline-bullets">
+                            <li>原料進料檢驗與品質控管</li>
+                            <li>品管儀器維護與校正</li>
+                            <li>品質文件整理與歸檔</li>
+                        </ul>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-header">
+                            <span class="timeline-title">門市人員 <span class="timeline-company">| 杏一醫療用品</span></span>
+                            <span class="timeline-date">2017年12月 - 2023年2月</span>
+                        </div>
+                        <ul class="timeline-bullets">
+                            <li>庫存管理與補貨作業</li>
+                            <li>商品陳列與賣場維護</li>
+                            <li>顧客服務與商品諮詢</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="resume-section">
+                    <h3 class="resume-h3">專業進修</h3>
+
+                    <div class="timeline-item">
+                        <div class="timeline-header">
+                            <span class="timeline-title">UIUX網頁設計班</span>
+                            <span class="timeline-date">2026年3月 - 2026年6月</span>
+                        </div>
+                        <ul class="timeline-bullets">
+                            <li>Figma介面設計與原型製作</li>
+                            <li>HTML、CSS網頁切版</li>
+                            <li>網頁設計稿規劃與製作</li>
+                            <li>響應式網頁開發(RWD)</li>
+                        </ul>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-header">
+                            <span class="timeline-title">影音剪輯班</span>
+                            <span class="timeline-date">2025年6月 - 2025年9月</span>
+                        </div>
+                        <ul class="timeline-bullets">
+                            <li>企劃與分鏡圖製作、影音拍攝與剪輯</li>
+                            <li>色彩校正及音效處理</li>
+                            <li>多軌剪輯、動畫及基礎特效</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 2. 技能頁面 -->
+        <section id="skills" class="page">
+            <h2 class="section-title">專業技能</h2>
+            <div class="skills-grid">
+
+                <!-- 卡片 1 -->
+                <div class="glass-card skill-card">
+                    <div class="skill-icon"><i class="fa-brands fa-figma"></i></div>
+                    <h3>UI / UX 設計</h3>
+                    <div class="skill-divider"></div>
+                    <ul class="skill-list">
+                        <li>Figma 介面設計 & prototype</li>
+                        <li>網頁設計稿規劃與製作</li>
+                        <li>Design System 建立</li>
+                    </ul>
+                </div>
+
+                <!-- 卡片 2 -->
+                <div class="glass-card skill-card">
+                    <div class="skill-icon"><i class="fa-solid fa-code"></i></div>
+                    <h3>前端切版開發</h3>
+                    <div class="skill-divider"></div>
+                    <ul class="skill-list">
+                        <li>HTML5 / CSS3 網頁切版</li>
+                        <li>Flexbox / Grid 佈局</li>
+                        <li>響應式網頁開發 (RWD)</li>
+                    </ul>
+                </div>
+
+                <!-- 卡片 3 -->
+                <div class="glass-card skill-card">
+                    <div class="skill-icon"><i class="fa-solid fa-video"></i></div>
+                    <h3>視覺與影音</h3>
+                    <div class="skill-divider"></div>
+                    <ul class="skill-list">
+                        <li>Adobe Photoshop</li>
+                        <li>Adobe Illustrator</li>
+                        <li>Adobe Premiere Pro</li>
+                        <li>企劃分鏡與基礎特效</li>
+                    </ul>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 3. 作品集頁面 (全新 5 項作品描述，完美預留空格) -->
+        <section id="portfolio" class="page">
+            <h2 class="section-title">精選作品</h2>
+            <div class="portfolio-grid">
+
+                <!-- 作品 1：figma首頁互動原型 -->
+                <a href="https://www.figma.com/proto/hAftyHzIVQiV7Yb0Qa7brz/%E7%81%B0%E7%89%88%E8%A9%A6%E5%88%87?node-id=0-1&p=f&t=8aBCjfQJ72NaRef3-0&scaling=scale-down&content-scaling=fixed&starting-point-node-id=295%3A1480&show-proto-sidebar=1"
+                    class="portfolio-link-wrapper" target="_blank">
+                    <div class="glass-card portfolio-card">
+                        <div class="p-img-container">
+                            <img src="./img/灰版.svg" alt="品牌官網首頁互動原型" onerror="this.style.opacity='0';">
+                            <i class="fa-brands fa-figma p-fallback-icon"></i>
+                        </div>
+                        <div class="p-content">
+                            <span class="p-tag">Figma 原型互動</span>
+                            <h3>柴油檢測網站</h3>
+                            <p>灰版prototype呈現互動效果</p>
+                            <div class="p-footer">查看設計稿 <i class="fa-solid fa-arrow-right"></i></div>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- 作品 2：figma手機介面設計稿 -->
+                <a href="https://www.figma.com/proto/hAftyHzIVQiV7Yb0Qa7brz/%E7%81%B0%E7%89%88%E8%A9%A6%E5%88%87?node-id=0-1&p=f&t=8aBCjfQJ72NaRef3-0&scaling=scale-down&content-scaling=fixed&starting-point-node-id=516%3A2722&show-proto-sidebar=1"
+                    class="portfolio-link-wrapper" target="_blank">
+                    <div class="glass-card portfolio-card">
+                        <div class="p-img-container">
+                            <img src="./img/高保真.svg" alt="跨平台手機介面設計稿" onerror="this.style.opacity='0';">
+                            <i class="fa-solid fa-mobile-screen-button p-fallback-icon"></i>
+                        </div>
+                        <div class="p-content">
+                            <span class="p-tag">UI/UX 介面設計</span>
+                            <h3>柴油檢測網站</h3>
+                            <p>高保真設計稿</p>
+                            <div class="p-footer">查看設計稿 <i class="fa-solid fa-arrow-right"></i></div>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- 作品 3：網頁小遊戲-五子棋 -->
+                <a href="./五子棋-2.html" class="portfolio-link-wrapper" target="_blank">
+                    <div class="glass-card portfolio-card">
+                        <div class="p-img-container">
+                            <img src="./img/五子棋.png" alt="網頁小遊戲-五子棋" onerror="this.style.opacity='0';">
+                            <i class="fa-solid fa-gamepad p-fallback-icon"></i>
+                        </div>
+                        <div class="p-content">
+                            <span class="p-tag">JavaScript / 網頁遊戲</span>
+                            <h3>五子棋</h3>
+                            <p>小遊戲</p>
+                            <div class="p-footer">實際遊玩 <i class="fa-solid fa-arrow-right"></i></div>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- 作品 4：網頁小遊戲-色盲測驗小遊戲 -->
+                <a href="./spotlight.html" class="portfolio-link-wrapper" target="_blank">
+                    <div class="glass-card portfolio-card">
+                        <div class="p-img-container">
+                            <img src="./img/貓咪.png" alt="色盲測驗小遊戲" onerror="this.style.opacity='0';">
+                            <i class="fa-solid fa-eye-dropper p-fallback-icon"></i>
+                        </div>
+                        <div class="p-content">
+                            <span class="p-tag">JavaScript / 網頁遊戲</span>
+                            <h3>尋找貓咪</h3>
+                            <p>小遊戲</p>
+                            <div class="p-footer">實際遊玩 <i class="fa-solid fa-arrow-right"></i></div>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="./colorGame.html" class="portfolio-link-wrapper" target="_blank">
+                    <div class="glass-card portfolio-card">
+                        <div class="p-img-container">
+                            <img src="./img/色弱.png" alt="色盲測驗小遊戲" onerror="this.style.opacity='0';">
+                            <i class="fa-solid fa-eye-dropper p-fallback-icon"></i>
+                        </div>
+                        <div class="p-content">
+                            <span class="p-tag">JavaScript / 網頁遊戲</span>
+                            <h3>色弱測驗</h3>
+                            <p>小遊戲</p>
+                            <div class="p-footer">實際遊玩 <i class="fa-solid fa-arrow-right"></i></div>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- 作品 5：微軟仿切 -->
+                <a href="./微軟/微軟.html" class="portfolio-link-wrapper" target="_blank">
+                    <div class="glass-card portfolio-card">
+                        <div class="p-img-container">
+                            <img src="./img/微軟.png"style='background-size:cover;' alt="Microsoft 官網高仿切版" onerror="this.style.opacity='0';">
+                            <i class="fa-solid fa-code p-fallback-icon"></i>
+                        </div>
+                        <div class="p-content">
+                            <span class="p-tag">HTML & CSS / RWD</span>
+                            <h3>Microsoft仿切</h3>
+                            <p>參考微軟官網</p>
+                            <div class="p-footer">檢視作品 <i class="fa-solid fa-arrow-right"></i></div>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="./fishLoading.html" class="portfolio-link-wrapper" target="_blank">
+                    <div class="glass-card portfolio-card">
+                        <div class="p-img-container">
+                            <img src="./img/fish.jpg" alt="Microsoft 官網高仿切版" onerror="this.style.opacity='0';">
+                            <i class="fa-solid fa-code p-fallback-icon"></i>
+                        </div>
+                        <div class="p-content">
+                            <span class="p-tag">HTML & CSS</span>
+                            <h3>可愛小烏賊Loading</h3>
+                            <p>雖然沒機會放到專案裡但很可愛先收藏起來</p>
+                            <div class="p-footer">檢視小烏賊 <i class="fa-solid fa-arrow-right"></i></div>
+                        </div>
+                    </div>
+                </a>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 路由與互動腳本 -->
+    <script>
+        function router() {
+            let hash = window.location.hash;
+            if (!hash) {
+                hash = '#about';
+                window.history.replaceState(null, null, hash);
+            }
+
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.querySelectorAll('nav a').forEach(link => link.classList.remove('active'));
+
+            const activePage = document.querySelector(hash);
+            if (activePage) activePage.classList.add('active');
+
+            const activeLink = document.querySelector(`nav a[href="${hash}"]`);
+            if (activeLink) activeLink.classList.add('active');
+        }
+
+        window.addEventListener('hashchange', router);
+        window.addEventListener('load', router);
+    </script>
+</body>
+
+</html>
