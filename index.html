@@ -307,19 +307,24 @@
             left: 0;
         }
 
-        /* --- 2. 技能頁面 (極致整齊優化版) --- */
+        /* --- 2. 技能頁面 (拉寬對齊版) --- */
         .skills-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 2rem;
-            align-items: stretch;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            /* 讓容器寬度設定為 100%，就能完美對齊上方導覽列的 LYNN 跟 作品集 */
+            width: 100%; 
+            margin: 0 auto;
         }
 
         .skill-card {
-            padding: 2.5rem 2rem;
+            padding: 2.5rem 3rem !important;
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             align-items: center;
+            justify-content: center; /* 讓內容在卡片正中間對齊，平衡左右空間 */
+            gap: 6rem; /* 增加圖示與文字的距離，因應卡片拉寬 */
+            width: 100%;
         }
 
         .skill-card:hover {
@@ -328,54 +333,49 @@
             background: rgba(255, 255, 255, 0.7);
         }
 
-        .skill-icon {
-            font-size: 2.3rem;
-            color: var(--accent-color);
-            margin-bottom: 1rem;
+        /* 左側：圖示與標題 */
+        .skill-header {
+            width: 120px; /* 固定寬度確保文字列表對齊 */
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.8rem;
         }
 
-        .skill-card h3 {
-            font-size: 1.2rem;
-            font-weight: 500;
+        .skill-icon {
+            font-size: 2.5rem;
+            color: var(--accent-color);
+            opacity: 0.35; 
+        }
+
+        .skill-header h3 {
+            font-size: 1.05rem;
+            font-weight: 600;
             color: var(--text-main);
             letter-spacing: 1px;
-            margin-bottom: 0.8rem;
+            line-height: 1.5;
+            margin: 0;
             text-align: center;
         }
 
-        .skill-divider {
-            width: 40px;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
-            margin-bottom: 1.5rem;
-        }
-
+        /* 右側：技能文字 */
         .skill-list {
-            list-style: none;
-            color: var(--text-light);
-            font-size: 1.05rem;
-            width: fit-content;
             display: flex;
             flex-direction: column;
-            gap: 0.6rem;
+            gap: 1.2rem; 
+            width: auto; /* 取消 100%，讓它在卡片中能置中 */
+            min-width: 280px; /* 給予最小寬度，防止字被擠壓 */
         }
 
-        .skill-list li {
+        .skill-item {
+            font-size: 1.05rem;
+            color: var(--text-light);
             font-weight: 400;
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            white-space: nowrap;
-        }
-
-        .skill-list li::before {
-            content: '';
-            display: inline-block;
-            width: 5px;
-            height: 5px;
-            background-color: var(--accent-color);
-            border-radius: 50%;
-            flex-shrink: 0;
+            letter-spacing: 0.5px;
+            line-height: 1.4;
+            word-break: keep-all; 
+            white-space: normal; 
         }
 
         /* --- 3. 作品集頁面 --- */
@@ -409,11 +409,11 @@
             background: rgba(255, 255, 255, 0.4);
             background-position: top;
             border-bottom: 1px solid rgba(255, 255, 255, 0.6);
-            /* position: relative; */
             overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative;
         }
 
         .p-img-container img {
@@ -426,7 +426,6 @@
         .portfolio-link-wrapper:hover .p-img-container img {
             transform: scale(1.05);
         }
-
 
         .p-fallback-icon {
             position: absolute;
@@ -481,7 +480,13 @@
             transform: translateX(3px);
         }
 
-        /* 手機板響應式調整 */
+        /* --- RWD 響應式調整 --- */
+        @media (max-width: 850px) {
+            .skill-card {
+                gap: 4rem; /* 平板縮小間距 */
+            }
+        }
+
         @media (max-width: 600px) {
             .profile-meta {
                 flex-direction: column;
@@ -501,6 +506,26 @@
 
             .about-layout {
                 padding: 2.5rem 1.5rem;
+            }
+            
+            /* 手機版技能卡片修復：取消居中，改為靠左 */
+            .skill-card {
+                padding: 2rem 1.5rem !important;
+                gap: 1.5rem; 
+                justify-content: flex-start; /* 空間不夠時，恢復靠左對齊 */
+            }
+
+            .skill-header {
+                width: 80px; 
+            }
+
+            .skill-list {
+                width: 100%; /* 恢復填滿寬度 */
+                min-width: auto;
+            }
+
+            .skill-item {
+                font-size: 0.95rem;
             }
         }
     </style>
@@ -616,52 +641,55 @@
             </div>
         </section>
 
-        <!-- 2. 技能頁面 -->
+        <!-- 2. 技能頁面 (拉寬對齊版) -->
         <section id="skills" class="page">
             <h2 class="section-title">專業技能</h2>
             <div class="skills-grid">
 
                 <!-- 卡片 1 -->
                 <div class="glass-card skill-card">
-                    <div class="skill-icon"><i class="fa-brands fa-figma"></i></div>
-                    <h3>UI / UX 設計</h3>
-                    <div class="skill-divider"></div>
-                    <ul class="skill-list">
-                        <li>Figma 介面設計 & prototype</li>
-                        <li>網頁設計稿規劃與製作</li>
-                        <li>Design System 建立</li>
-                    </ul>
+                    <div class="skill-header">
+                        <div class="skill-icon"><i class="fa-brands fa-figma"></i></div>
+                        <h3>UI / UX<br>設計</h3>
+                    </div>
+                    <div class="skill-list">
+                        <div class="skill-item">Figma 介面設計 & prototype</div>
+                        <div class="skill-item">網頁設計稿規劃與製作</div>
+                        <div class="skill-item">Design System 建立</div>
+                    </div>
                 </div>
 
                 <!-- 卡片 2 -->
                 <div class="glass-card skill-card">
-                    <div class="skill-icon"><i class="fa-solid fa-code"></i></div>
-                    <h3>前端切版開發</h3>
-                    <div class="skill-divider"></div>
-                    <ul class="skill-list">
-                        <li>HTML5 / CSS3 網頁切版</li>
-                        <li>Flexbox / Grid 佈局</li>
-                        <li>響應式網頁開發 (RWD)</li>
-                    </ul>
+                    <div class="skill-header">
+                        <div class="skill-icon"><i class="fa-solid fa-code"></i></div>
+                        <h3>前端切版<br>開發</h3>
+                    </div>
+                    <div class="skill-list">
+                        <div class="skill-item">HTML5 / CSS3 網頁切版</div>
+                        <div class="skill-item">Flexbox / Grid 佈局</div>
+                        <div class="skill-item">響應式網頁開發 (RWD)</div>
+                    </div>
                 </div>
 
                 <!-- 卡片 3 -->
                 <div class="glass-card skill-card">
-                    <div class="skill-icon"><i class="fa-solid fa-video"></i></div>
-                    <h3>視覺與影音</h3>
-                    <div class="skill-divider"></div>
-                    <ul class="skill-list">
-                        <li>Adobe Photoshop</li>
-                        <li>Adobe Illustrator</li>
-                        <li>Adobe Premiere Pro</li>
-                        <li>企劃分鏡與基礎特效</li>
-                    </ul>
+                    <div class="skill-header">
+                        <div class="skill-icon"><i class="fa-solid fa-video"></i></div>
+                        <h3>視覺與影<br>音</h3>
+                    </div>
+                    <div class="skill-list">
+                        <div class="skill-item">Adobe Photoshop</div>
+                        <div class="skill-item">Adobe Illustrator</div>
+                        <div class="skill-item">Adobe Premiere Pro</div>
+                        <div class="skill-item">企劃分鏡與基礎特效</div>
+                    </div>
                 </div>
 
             </div>
         </section>
 
-        <!-- 3. 作品集頁面 (全新 5 項作品描述，完美預留空格) -->
+        <!-- 3. 作品集頁面 -->
         <section id="portfolio" class="page">
             <h2 class="section-title">精選作品</h2>
             <div class="portfolio-grid">
@@ -732,6 +760,7 @@
                     </div>
                 </a>
 
+                <!-- 作品 5：網頁小遊戲-色弱測驗 -->
                 <a href="./colorGame.html" class="portfolio-link-wrapper" target="_blank">
                     <div class="glass-card portfolio-card">
                         <div class="p-img-container">
@@ -747,11 +776,11 @@
                     </div>
                 </a>
 
-                <!-- 作品 5：微軟仿切 -->
+                <!-- 作品 6：微軟仿切 -->
                 <a href="./微軟/微軟.html" class="portfolio-link-wrapper" target="_blank">
                     <div class="glass-card portfolio-card">
                         <div class="p-img-container">
-                            <img src="./img/微軟.png"style='background-size:cover;' alt="Microsoft 官網高仿切版" onerror="this.style.opacity='0';">
+                            <img src="./img/微軟.png" style='background-size:cover;' alt="Microsoft 官網高仿切版" onerror="this.style.opacity='0';">
                             <i class="fa-solid fa-code p-fallback-icon"></i>
                         </div>
                         <div class="p-content">
@@ -763,6 +792,7 @@
                     </div>
                 </a>
 
+                <!-- 作品 7：可愛Loading -->
                 <a href="./fishLoading.html" class="portfolio-link-wrapper" target="_blank">
                     <div class="glass-card portfolio-card">
                         <div class="p-img-container">
@@ -772,7 +802,6 @@
                         <div class="p-content">
                             <span class="p-tag">HTML & CSS</span>
                             <h3>可愛Loading</h3>
-                            <p>沒放入專案的小烏賊</p>
                             <div class="p-footer">檢視 <i class="fa-solid fa-arrow-right"></i></div>
                         </div>
                     </div>
