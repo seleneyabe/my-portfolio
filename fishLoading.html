@@ -1,612 +1,999 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>魔法海洋 Loading</title>
-
-<style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-body{
-    overflow:hidden;
-
-    font-family:
-    "jf-openhuninn",
-    "粉圓體",
-    "Microsoft JhengHei",
-    sans-serif;
-
-    background:
-    linear-gradient(
-        180deg,
-        #f7fbff 0%,
-        #dff4ff 45%,
-        #c7ecff 100%
-    );
-}
-
-/* ================= */
-/* Loading 遮罩 */
-/* ================= */
-
-.loading-container{
-    position:fixed;
-    inset:0;
-
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-
-    overflow:hidden;
-
-    transition:
-    opacity .8s ease,
-    visibility .8s ease;
-
-    z-index:9999;
-}
-
-.fade-out{
-    opacity:0;
-    visibility:hidden;
-}
-
-/* ================= */
-/* 魔法粒子 */
-/* ================= */
-
-.sparkle{
-    position:absolute;
-
-    width:4px;
-    height:4px;
-
-    background:white;
-
-    border-radius:50%;
-
-    animation:
-    sparkleFloat linear infinite;
-}
-
-@keyframes sparkleFloat{
-
-    from{
-        transform:
-        translateY(100vh)
-        scale(0);
-
-        opacity:0;
-    }
-
-    20%{
-        opacity:1;
-    }
-
-    to{
-        transform:
-        translateY(-100px)
-        scale(1);
-
-        opacity:0;
-    }
-}
-
-/* ================= */
-/* 水缸 */
-/* ================= */
-
-.water-tank{
-    position:relative;
-
-    width:220px;
-    height:220px;
-
-    border-radius:50%;
-
-    overflow:hidden;
-
-    background:white;
-
-    border:8px solid #bde9ff;
-
-    box-shadow:
-    0 0 30px rgba(56,189,248,.35),
-    0 0 60px rgba(56,189,248,.2),
-    0 15px 40px rgba(0,0,0,.08);
-
-    animation:
-    tankFloat 4s ease-in-out infinite;
-}
-
-@keyframes tankFloat{
-    0%,100%{
-        transform:translateY(0);
-    }
-
-    50%{
-        transform:translateY(-5px);
-    }
-}
-
-.success{
-    animation:
-    splash .8s ease;
-}
-
-@keyframes splash{
-
-    0%{
-        transform:scale(1);
-    }
-
-    30%{
-        transform:scale(1.08);
-    }
-
-    100%{
-        transform:scale(1);
-    }
-}
-
-/* ================= */
-/* 水 */
-/* ================= */
-
-.water-base{
-    position:absolute;
-
-    left:0;
-    bottom:0;
-
-    width:100%;
-    height:0%;
-
-    background:
-    linear-gradient(
-        180deg,
-        #67d5ff,
-        #2ab7ff
-    );
-
-    transition:height .05s linear;
-}
-
-/* 波浪 */
-
-.wave{
-    position:absolute;
-
-    top:-12px;
-    left:-50%;
-
-    width:200%;
-    height:25px;
-
-    background:
-    rgba(255,255,255,.4);
-
-    border-radius:45%;
-
-    animation:
-    waveMove linear infinite;
-}
-
-.wave1{
-    animation-duration:4s;
-}
-
-.wave2{
-    animation-duration:6s;
-    opacity:.5;
-}
-
-@keyframes waveMove{
-
-    from{
-        transform:translateX(0);
-    }
-
-    to{
-        transform:translateX(-25%);
-    }
-}
-
-/* ================= */
-/* 泡泡 */
-/* ================= */
-
-.bubble{
-    position:absolute;
-
-    bottom:10px;
-
-    border-radius:50%;
-
-    background:
-    rgba(255,255,255,.65);
-
-    animation:
-    rise 4s infinite;
-}
-
-.b1{
-    width:8px;
-    height:8px;
-    left:40px;
-}
-
-.b2{
-    width:12px;
-    height:12px;
-    left:80px;
-    animation-delay:1s;
-}
-
-.b3{
-    width:10px;
-    height:10px;
-    right:40px;
-    animation-delay:2s;
-}
-
-.b4{
-    width:6px;
-    height:6px;
-    right:80px;
-    animation-delay:.5s;
-}
-
-@keyframes rise{
-
-    from{
-        transform:translateY(0);
-        opacity:0;
-    }
-
-    20%{
-        opacity:1;
-    }
-
-    to{
-        transform:translateY(-180px);
-        opacity:0;
-    }
-}
-
-/* ================= */
-/* 小烏賊 */
-/* ================= */
-
-.squid{
-    position:absolute;
-
-    left:50%;
-    bottom:20px;
-
-    transform:translateX(-50%);
-
-    width:70px;
-    height:95px;
-
-    z-index:10;
-
-    transition:
-    bottom .05s linear;
-
-    animation:
-    float 2s ease-in-out infinite;
-}
-
-@keyframes float{
-
-    0%,100%{
-        transform:
-        translateX(-50%)
-        translateY(0);
-    }
-
-    50%{
-        transform:
-        translateX(-50%)
-        translateY(-8px);
-    }
-}
-
-.squid-head{
-    width:70px;
-    height:70px;
-
-    background:#ff839a;
-
-    border-radius:
-    35px 35px 18px 18px;
-
-    position:relative;
-}
-
-.eyes{
-    position:absolute;
-
-    top:32px;
-
-    width:8px;
-    height:8px;
-
-    background:#333;
-
-    border-radius:50%;
-
-    animation:
-    blink 5s infinite;
-}
-
-.eyes.left{
-    left:18px;
-}
-
-.eyes.right{
-    right:18px;
-}
-
-@keyframes blink{
-
-    0%,96%,100%{
-        transform:scaleY(1);
-    }
-
-    98%{
-        transform:scaleY(.1);
-    }
-}
-
-.blush{
-    position:absolute;
-
-    width:10px;
-    height:5px;
-
-    background:#ff839a;
-
-    border-radius:50%;
-
-    top:40px;
-}
-
-.blush.left{
-    left:8px;
-}
-
-.blush.right{
-    right:8px;
-}
-
-.tentacles{
-    display:flex;
-    justify-content:space-around;
-
-    margin-top:-5px;
-}
-
-.tentacle{
-    width:8px;
-    height:28px;
-
-    background:#ff839a;
-
-    border-radius:0 0 4px 4px;
-
-    animation:
-    swim .8s ease-in-out infinite alternate;
-}
-
-.tentacle:nth-child(2),
-.tentacle:nth-child(4){
-    animation-delay:.15s;
-}
-
-@keyframes swim{
-
-    from{
-        transform:scaleY(.8);
-    }
-
-    to{
-        transform:scaleY(1.2);
-    }
-}
-
-/* ================= */
-/* 文字 */
-/* ================= */
-
-.loading-text{
-
-    margin-top:30px;
-
-    color:#0284c7;
-
-    font-weight:700;
-
-    font-size:18px;
-
-    letter-spacing:2px;
-
-    text-shadow:
-    0 2px 10px rgba(56,189,248,.3);
-}
-
-.loading-percent{
-
-    margin-top:10px;
-
-    color:#0ea5e9;
-
-    font-size:28px;
-
-    font-weight:900;
-}
-
-.sub-text{
-
-    margin-top:8px;
-
-    color:#5b9cc5;
-
-    font-size:14px;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>魔法海洋 | 深海生物收藏圖鑑</title>
+    <style>
+        :root {
+            --bg-gradient: radial-gradient(circle at center, #0c2b53 0%, #031024 100%);
+            --glass-bg: rgba(255, 255, 255, 0.07);
+            --glass-border: rgba(255, 255, 255, 0.15);
+
+            /* 稀有度色彩 */
+            --rarity-legendary: #ffb800;
+            --rarity-epic: #a855f7;
+            --rarity-rare: #3b82f6;
+            --rarity-normal: #10b981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* 預設全面隱藏滾動條，避免首頁或 Loading 出現爆版 */
+        body {
+            font-family: "jf-openhuninn", "粉圓體", "Microsoft JhengHei", sans-serif;
+            background: var(--bg-gradient);
+            color: white;
+            min-height: 100vh;
+            width: 100vw;
+            overflow: hidden !important;
+        }
+
+        /* ================= */
+        /* 主網頁首頁 (Hero) */
+        /* ================= */
+        .main-content {
+            position: fixed;
+            /* 改為 fixed 固定，防止任何子元素引發全頁面捲動 */
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: opacity 1s ease, transform 1s ease, visibility 1s;
+            z-index: 10;
+            overflow: hidden;
+        }
+
+        .main-content.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .main-title {
+            font-size: 3.5rem;
+            font-weight: bold;
+            letter-spacing: 6px;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 30px rgba(103, 213, 255, 0.6);
+            background: linear-gradient(180deg, #ffffff 30%, #8ae0ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .main-subtitle {
+            font-size: 1.2rem;
+            color: #8ae0ff;
+            letter-spacing: 3px;
+            margin-bottom: 2.5rem;
+            opacity: 0.9;
+        }
+
+        /* 修正後的開始探索按鍵 */
+        .explore-btn {
+            padding: 14px 40px;
+            font-size: 1.15rem;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            /* 調整特效使其在內部與安全區域內安全過渡 */
+            transition: background 0.3s, border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+            transform: translateY(0) scale(1);
+        }
+
+        .explore-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            /* 使用稍微內斂的 scale 配合陰影，加上外層 overflow 保護，絕不爆版 */
+            border-color: rgba(56, 189, 248, 0.6);
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        /* ================= */
+        /* 收藏圖鑑分頁 (Gallery) */
+        /* ================= */
+        .gallery-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+            opacity: 0;
+            display: none;
+            transform: translateY(30px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+
+        .gallery-section.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .gallery-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .gallery-header h2 {
+            font-size: 2.4rem;
+            letter-spacing: 4px;
+            color: #fff;
+            text-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+            margin-bottom: 12px;
+        }
+
+        /* 篩選按鈕列 */
+        .filter-bar {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 22px;
+            font-size: 0.95rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: #94a3b8;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            color: #fff;
+            background: #0284c7;
+            border-color: #38bdf8;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+        }
+
+        /* 卡片網格 */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 35px;
+            padding: 20px 0;
+        }
+
+        /* 單張卡片樣式 */
+        .collection-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .collection-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(56, 189, 248, 0.5);
+            box-shadow: 0 15px 35px rgba(56, 189, 248, 0.3);
+        }
+
+        /* 稀有度標籤 */
+        .rarity-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 0.75rem;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            z-index: 5;
+            backdrop-filter: blur(5px);
+        }
+
+        .badge-legendary {
+            background: rgba(255, 184, 0, 0.2);
+            color: var(--rarity-legendary);
+            border: 1px solid var(--rarity-legendary);
+        }
+
+        .badge-epic {
+            background: rgba(168, 85, 247, 0.2);
+            color: var(--rarity-epic);
+            border: 1px solid var(--rarity-epic);
+        }
+
+        .badge-rare {
+            background: rgba(59, 131, 246, 0.2);
+            color: var(--rarity-rare);
+            border: 1px solid var(--rarity-rare);
+        }
+
+        .badge-normal {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--rarity-normal);
+            border: 1px solid var(--rarity-normal);
+        }
+
+        /* 卡片圖片容器 */
+        .card-img-wrapper {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 18px;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-creature-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .collection-card:hover .card-creature-img {
+            transform: scale(1.08);
+        }
+
+        .card-info {
+            padding: 0 5px;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+            color: #fff;
+        }
+
+        .card-desc {
+            font-size: 0.88rem;
+            color: #94a3b8;
+            line-height: 1.6;
+            height: 48px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* ================= */
+        /* 詳細彈出視窗 (Modal) */
+        /* ================= */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(3, 16, 36, 0.88);
+            backdrop-filter: blur(10px);
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-box {
+            background: linear-gradient(135deg, rgba(15, 32, 67, 0.98) 0%, rgba(7, 18, 36, 0.98) 100%);
+            border: 1px solid rgba(56, 189, 248, 0.35);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(56, 189, 248, 0.25);
+            width: 90%;
+            max-width: 440px;
+            border-radius: 28px;
+            padding: 30px;
+            position: relative;
+            transform: scale(0.85);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .modal-overlay.open .modal-box {
+            transform: scale(1);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s;
+            z-index: 10;
+        }
+
+        .close-btn:hover {
+            background: rgba(244, 63, 94, 0.2);
+            color: #f43f5e;
+            border-color: #f43f5e;
+            transform: rotate(90deg);
+        }
+
+        .modal-img-wrapper {
+            width: 100%;
+            aspect-ratio: 1.2;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-creature-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .modal-content-area {
+            text-align: center;
+        }
+
+        .modal-rarity {
+            display: inline-block;
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 14px;
+            color: #fff;
+            text-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+        }
+
+        .modal-body-text {
+            color: #cbd5e1;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            margin-bottom: 25px;
+            text-align: left;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .modal-footer-info {
+            font-size: 0.8rem;
+            color: #64748b;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding-top: 15px;
+            letter-spacing: 1px;
+        }
+
+        /* ================= */
+        /* 原生 Loading 遮罩樣式 */
+        /* ================= */
+        .loading-container {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            background: linear-gradient(180deg, #f7fbff 0%, #dff4ff 45%, #c7ecff 100%);
+            transition: opacity .8s ease, visibility .8s ease;
+            z-index: 9999;
+        }
+
+        .loading-container.fade-out {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            animation: sparkleFloat linear infinite;
+        }
+
+        @keyframes sparkleFloat {
+            from {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+
+            20% {
+                opacity: 1;
+            }
+
+            to {
+                transform: translateY(-100px) scale(1);
+                opacity: 0;
+            }
+        }
+
+        .water-tank {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: white;
+            border: 8px solid #bde9ff;
+            box-shadow: 0 0 30px rgba(56, 189, 248, .35), 0 0 60px rgba(56, 189, 248, .2), 0 15px 40px rgba(0, 0, 0, .08);
+            animation: tankFloat 4s ease-in-out infinite;
+        }
+
+        @keyframes tankFloat {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .success {
+            animation: splash .8s ease;
+        }
+
+        @keyframes splash {
+            0% {
+                transform: scale(1);
+            }
+
+            30% {
+                transform: scale(1.08);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .water-base {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 0%;
+            background: linear-gradient(180deg, #67d5ff, #2ab7ff);
+            transition: height .05s linear;
+        }
+
+        .wave {
+            position: absolute;
+            top: -12px;
+            left: -50%;
+            width: 200%;
+            height: 25px;
+            background: rgba(255, 255, 255, .4);
+            border-radius: 45%;
+            animation: waveMove linear infinite;
+        }
+
+        .wave1 {
+            animation-duration: 4s;
+        }
+
+        .wave2 {
+            animation-duration: 6s;
+            opacity: .5;
+        }
+
+        @keyframes waveMove {
+            from {
+                transform: translateX(0);
+            }
+
+            to {
+                transform: translateX(-25%);
+            }
+        }
+
+        .bubble {
+            position: absolute;
+            bottom: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .65);
+            animation: rise 4s infinite;
+        }
+
+        .b1 {
+            width: 8px;
+            height: 8px;
+            left: 40px;
+        }
+
+        .b2 {
+            width: 12px;
+            height: 12px;
+            left: 80px;
+            animation-delay: 1s;
+        }
+
+        .b3 {
+            width: 10px;
+            height: 10px;
+            right: 40px;
+            animation-delay: 2s;
+        }
+
+        .b4 {
+            width: 6px;
+            height: 6px;
+            right: 80px;
+            animation-delay: .5s;
+        }
+
+        @keyframes rise {
+            from {
+                transform: translateY(0);
+                opacity: 0;
+            }
+
+            20% {
+                opacity: 1;
+            }
+
+            to {
+                transform: translateY(-180px);
+                opacity: 0;
+            }
+        }
+
+        .squid {
+            position: absolute;
+            left: 50%;
+            bottom: 20px;
+            transform: translateX(-50%);
+            width: 70px;
+            height: 95px;
+            z-index: 10;
+            transition: bottom .05s linear;
+            animation: float 2s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateX(-50%) translateY(0);
+            }
+
+            50% {
+                transform: translateX(-50%) translateY(-8px);
+            }
+        }
+
+        .squid-head {
+            width: 70px;
+            height: 70px;
+            background: #ff839a;
+            border-radius: 35px 35px 18px 18px;
+            position: relative;
+        }
+
+        .eyes {
+            position: absolute;
+            top: 32px;
+            width: 8px;
+            height: 8px;
+            background: #333;
+            border-radius: 50%;
+            animation: blink 5s infinite;
+        }
+
+        .eyes.left {
+            left: 18px;
+        }
+
+        .eyes.right {
+            right: 18px;
+        }
+
+        @keyframes blink {
+
+            0%,
+            96%,
+            100% {
+                transform: scaleY(1);
+            }
+
+            98% {
+                transform: scaleY(.1);
+            }
+        }
+
+        .blush {
+            position: absolute;
+            width: 10px;
+            height: 5px;
+            background: #ff839a;
+            border-radius: 50%;
+            top: 40px;
+        }
+
+        .blush.left {
+            left: 8px;
+        }
+
+        .blush.right {
+            right: 8px;
+        }
+
+        .tentacles {
+            display: flex;
+            justify-content: space-around;
+            margin-top: -5px;
+        }
+
+        .tentacle {
+            width: 8px;
+            height: 28px;
+            background: #ff839a;
+            border-radius: 0 0 4px 4px;
+            animation: swim .8s ease-in-out infinite alternate;
+        }
+
+        .tentacle:nth-child(2),
+        .tentacle:nth-child(4) {
+            animation-delay: .15s;
+        }
+
+        @keyframes swim {
+            from {
+                transform: scaleY(.8);
+            }
+
+            to {
+                transform: scaleY(1.2);
+            }
+        }
+
+        .loading-text {
+            margin-top: 30px;
+            color: #0284c7;
+            font-weight: 700;
+            font-size: 18px;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 10px rgba(56, 189, 248, .3);
+        }
+
+        .loading-percent {
+            margin-top: 10px;
+            color: #0ea5e9;
+            font-size: 28px;
+            font-weight: 900;
+        }
+
+        .sub-text {
+            margin-top: 8px;
+            color: #5b9cc5;
+            font-size: 14px;
+        }
+    </style>
 </head>
 
 <body>
 
-<div class="loading-container" id="loadingMask">
+    <main class="main-content" id="mainContent">
+        <h1 class="main-title">魔法海洋</h1>
+        <p class="main-subtitle">深海的奇幻旅程已經為您開啟</p>
+        <button class="explore-btn" id="exploreBtn">開始探索</button>
+    </main>
 
-    <!-- 粒子 -->
-    <div id="particles"></div>
+    <section class="gallery-section" id="gallerySection">
+        <div class="gallery-header">
+            <h2>深海生物收藏卡</h2>
+            <p style="color: #38bdf8; font-size: 0.95rem; letter-spacing: 1px;">點擊卡片查閱古老海洋魔法傳說</p>
 
-    <div class="water-tank" id="waterTank">
-
-        <div class="water-base" id="waterLevel">
-
-            <div class="wave wave1"></div>
-            <div class="wave wave2"></div>
-
+            <div class="filter-bar">
+                <button class="filter-btn active" data-filter="all">全部收藏</button>
+                <button class="filter-btn" data-filter="legendary">傳說</button>
+                <button class="filter-btn" data-filter="epic">史詩</button>
+                <button class="filter-btn" data-filter="rare">稀有</button>
+                <button class="filter-btn" data-filter="normal">普通</button>
+            </div>
         </div>
 
-        <div class="bubble b1"></div>
-        <div class="bubble b2"></div>
-        <div class="bubble b3"></div>
-        <div class="bubble b4"></div>
-
-        <div class="squid" id="squid">
-
-            <div class="squid-head">
-
-                <div class="eyes left"></div>
-                <div class="eyes right"></div>
-
-                <div class="blush left"></div>
-                <div class="blush right"></div>
-
-            </div>
-
-            <div class="tentacles">
-                <div class="tentacle"></div>
-                <div class="tentacle"></div>
-                <div class="tentacle"></div>
-                <div class="tentacle"></div>
-            </div>
-
+        <div class="card-grid" id="cardGrid">
         </div>
+    </section>
 
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-box">
+            <button class="close-btn" id="closeModal">✕</button>
+            <div class="modal-img-wrapper">
+                <img src="" alt="生物大圖" class="modal-creature-img" id="modalImg">
+            </div>
+            <div class="modal-content-area">
+                <div class="modal-rarity" id="modalRarity"></div>
+                <h3 class="modal-title" id="modalTitle">生物名稱</h3>
+                <p class="modal-body-text" id="modalDesc">詳細故事內容</p>
+                <div class="modal-footer-info" id="modalId">COLLECTION NO.000</div>
+            </div>
+        </div>
     </div>
 
-    <div class="loading-text">
-        海水注入中...
+    <div class="loading-container" id="loadingMask">
+        <div id="particles"></div>
+        <div class="water-tank" id="waterTank">
+            <div class="water-base" id="waterLevel">
+                <div class="wave wave1"></div>
+                <div class="wave wave2"></div>
+            </div>
+            <div class="bubble b1"></div>
+            <div class="bubble b2"></div>
+            <div class="bubble b3"></div>
+            <div class="bubble b4"></div>
+            <div class="squid" id="squid">
+                <div class="squid-head">
+                    <div class="eyes left"></div>
+                    <div class="eyes right"></div>
+                    <div class="blush left"></div>
+                    <div class="blush right"></div>
+                </div>
+                <div class="tentacles">
+                    <div class="tentacle"></div>
+                    <div class="tentacle"></div>
+                    <div class="tentacle"></div>
+                    <div class="tentacle"></div>
+                </div>
+            </div>
+        </div>
+        <div class="loading-text">海底尋寶即將啟程</div>
+        <div class="loading-percent" id="loadingPercent">0%</div>
+        <div class="sub-text">裝備準備中...</div>
     </div>
 
-    <div class="loading-percent" id="loadingPercent">
-        0%
-    </div>
+    <script>
+        /* ================= */
+        /* 核心資料定義（套用圖片檔名） */
+        /* ================= */
+        /* ================= */
+        /* 核心資料定義（套用圖片檔名） */
+        /* ================= */
+        const creaturesData = [
+            // 原始的 6 張卡片
+            { id: "001", name: "嚮導小烏賊", rarity: "normal", rarityName: "普通", img: "./img/烏賊.png", desc: "魔法海洋的資深引路人。天生樂觀，最喜歡做的事情就是往空水缸中注入滿滿的魔法海水。", longDesc: "作為魔法海洋底層的辛勤勞動者，嚮導小烏賊體內蘊含著純淨的水晶魔力。牠們成群結隊活動時，能在一瞬間聚集大量的水流。如果你在深海迷路，跟著牠們活潑的觸手擺動方向走準見錯。" },
+            { id: "002", name: "夜光水母", rarity: "rare", rarityName: "稀有", img: "./img/水母.png", desc: "在漆黑的幽冥深海中閃爍著微弱藍光，據說能指引迷途旅人的靈魂。", longDesc: "夜光螢火水母不靠雙眼視物，而是感應海洋中的魔力震動。牠們傘狀體下方的微光是由海洋古老咒語轉化而成的生物螢光。旅人若將其輕輕托起，能在短時間內獲得看穿深海迷霧的魔幻視界。" },
+            { id: "003", name: "深淵垂釣鮟鱇", rarity: "epic", rarityName: "史詩", img: "./img/安康魚.png", desc: "頭頂懸掛著一顆神秘的魔法星芒，專門在極夜的深淵中搜集失落的光明。", longDesc: "生活在海平面下萬米之處的古老魚類。牠額頭上的發光體並非普通亮光，而是吞噬了沉船中巫師遺留的法杖殘渣後產生的魔法源泉。牠利用這束光芒一邊在黑暗中探路，一邊守護著深淵邊界。" },
+            { id: "004", name: "時之流沙海馬", rarity: "rare", rarityName: "稀有", img: "./img/海馬.png", desc: "尾巴捲曲著沙漏般的流光，據說牠游動時，周圍的時間會變得很慢。", longDesc: "時之流沙海馬身軀呈現半透明的琥珀色，牠們依附在海底沉睡的鐘錶殘骸旁生長。每當海流交替，牠們會輕輕搖晃尾部，釋放出能減緩水流速度的「滯留領域」，是十分罕見且難以捕捉的奇幻生物。" },
+            { id: "005", name: "幻彩極光翻車魚", rarity: "legendary", rarityName: "傳說", img: "./img/翻車魚.png", desc: "體型巨大的海洋古神後裔，游過之處會留下猶如極光般絢麗的魔力軌跡。", longDesc: "這尊巨大的生物被深海原住民奉為「極光之子」。牠一生都在無盡的洋流中巡迴漂流，其背部堅硬的表皮能反射並放大來自海底火山的微光，在汪洋中交織出七彩霓虹，見到牠的人將獲得一整年的海洋庇護。" },
+            { id: "006", name: "沉船守護寄居蟹", rarity: "normal", rarityName: "普通", img: "./img/螃蟹.png", desc: "背著由海盜沉船寶箱做成的硬殼，默默在沙地裡守護著海底的秘密。", longDesc: "比起一般的寄居蟹，牠們更喜歡黃金與古董。牠們會在沉船遺跡周圍徘徊，尋找大小適中的藏寶箱當作自己的新家。雖然脾氣有點傲嬌，但若你用亮晶晶的小貝殼跟牠交換，牠很樂意跟你分享沉船藏寶圖的線索。" },
+            { id: "007", name: "琉璃珊瑚海龍", rarity: "epic", rarityName: "史詩", img: "./img/珊瑚龍.png", desc: "穿梭於古老珊瑚礁間的優雅使者，頭頂的珊瑚角散發著溫暖的微光。", longDesc: "被認為是珊瑚礁守護者的琉璃海龍，擁有如精靈般半透明的薄翼。牠們輕盈地游動時，會灑下細碎的星光粉末，這些粉末能加速海底植物的生長。據說只有內心純潔的潛水者，才能在陽光灑落的海溝深處瞥見牠們優雅的身影。" },
+            {
+                id: "008",
+                name: "朝陽幻彩胖胖魚",
+                rarity: "normal",
+                rarityName: "普通",
+                img: "./img/胖胖魚.png", // 替換為你的圖2檔名
+                desc: "擁有如晨曦般溫暖色彩的圓潤小魚，總是用充滿好奇的大眼睛觀察世界。",
+                longDesc: "這是一種隨處可見卻十分討喜的魔法小魚。牠們圓滾滾的肚子裡儲存著純淨的海水魔力，當牠們感到開心時，吐出的泡泡會在陽光下折射出彩虹的光芒。雖然沒有強大的魔法，但牠們群聚時的歡樂氣息能驅散深海的幽暗與憂愁。"
+            },
+            {
+                id: "009",
+                name: "翡翠星晶海龜",
+                rarity: "legendary",
+                rarityName: "傳說",
+                img: "./img/海龜.png", // 替換為你的圖3檔名
+                desc: "背甲上鑲嵌著能吸收星光的神秘紋路，是海洋中最長壽且充滿智慧的存在。",
+                longDesc: "傳說中馱著失落古文明記憶的古老生物。翡翠星晶海龜的移動速度雖然緩慢，但牠們的龜殼是一個小型的魔法力場，能抵禦一切深海的暗流與風暴。當夜空星光最明亮時，牠們會浮出水面，將星光轉化為純粹的魔力儲存於背甲之中。"
+            },
+            {
+                id: "010",
+                name: "星宿微光海星",
+                rarity: "rare",
+                rarityName: "稀有",
+                img: "./img/海星.png", // 替換為你的圖4檔名
+                desc: "身體表面印有璀璨的星象軌跡，喜歡在淺灘的礁石上吸收月光。",
+                longDesc: "與其說是海洋生物，不如說是隕落海底的星星碎片。星宿微光海星的觸角上連接著微小的魔力節點，能在黑暗中勾勒出星座的形狀。迷失方向的航海家只要看著牠們發光的軌跡，就能找到通往安全海域的正確航線。"
+            },
+            {
+                id: "011",
+                name: "星眸幽靈小章魚",
+                rarity: "rare",
+                rarityName: "稀有",
+                img: "./img/小章魚.png", // 替換為你的圖5檔名
+                desc: "擁有裝滿星辰般水汪汪的大眼睛，性格害羞，緊張時會噴出紫色的星砂墨汁。",
+                longDesc: "隱居在淺海沙地裡的害羞小傢伙。星眸幽靈小章魚非常膽小，遇到陌生生物時會迅速用觸手捂住自己。牠們的眼睛深邃如同宇宙，據說盯著牠們的眼睛看，能看見自己內心最純粹的願望。如果幸運獲得牠的信任，牠會用觸手輕輕觸碰你的指尖。"
+            },
+            {
+                id: "012",
+                name: "星幻微笑真珠貝",
+                rarity: "epic",
+                rarityName: "史詩",
+                img: "./img/貝殼.png", // 替換為你的圖6檔名
+                desc: "孕育著蘊含龐大魔力的星幻珍珠，貝殼開合間彷彿能聽見悠遠的海洋搖籃曲。",
+                longDesc: "生長在魔力匯聚的深海熱泉旁，星幻微笑真珠貝需要吸收數百年的魔法潮汐才能孕育出一顆擁有自主意識的珍珠。這顆珍珠不僅會散發出柔和的粉色星斑，還會對友善的靠近者露出可愛的微笑。傳說將其帶在身邊，能永保心靈的平靜與愉悅。"
+            }
+        ];
+        /* ================= */
+        /* DOM 元件獲取 */
+        /* ================= */
+        const waterLevel = document.getElementById("waterLevel");
+        const squid = document.getElementById("squid");
+        const percent = document.getElementById("loadingPercent");
+        const tank = document.getElementById("waterTank");
+        const loadingMask = document.getElementById("loadingMask");
+        const mainContent = document.getElementById("mainContent");
+        const gallerySection = document.getElementById("gallerySection");
+        const cardGrid = document.getElementById("cardGrid");
+        const exploreBtn = document.getElementById("exploreBtn");
 
-    <div class="sub-text">
-        快好了...
-    </div>
+        // Modal 元件
+        const modalOverlay = document.getElementById("modalOverlay");
+        const closeModal = document.getElementById("closeModal");
+        const modalImg = document.getElementById("modalImg");
+        const modalRarity = document.getElementById("modalRarity");
+        const modalTitle = document.getElementById("modalTitle");
+        const modalDesc = document.getElementById("modalDesc");
+        const modalId = document.getElementById("modalId");
 
-</div>
+        /* ================= */
+        /* 魔法粒子生成 */
+        /* ================= */
+        for (let i = 0; i < 35; i++) {
+            const star = document.createElement("div");
+            star.className = "sparkle";
+            star.style.left = Math.random() * 100 + "%";
+            star.style.animationDuration = 5 + Math.random() * 10 + "s";
+            star.style.animationDelay = Math.random() * 10 + "s";
+            document.body.appendChild(star);
+        }
 
-<script>
+        /* ================= */
+        /* Loading 進度 */
+        /* ================= */
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress++;
+            waterLevel.style.height = progress + "%";
+            squid.style.bottom = 20 + (progress * 1.25) + "px";
+            percent.textContent = progress + "%";
 
-const waterLevel =
-document.getElementById("waterLevel");
+            if (progress >= 100) {
+                clearInterval(interval);
+                tank.classList.add("success");
 
-const squid =
-document.getElementById("squid");
+                document.querySelector(".loading-text").textContent = "準備完成！";
+                document.querySelector(".sub-text").textContent = "GOGO!";
 
-const percent =
-document.getElementById("loadingPercent");
+                setTimeout(() => {
+                    loadingMask.classList.add("fade-out");
+                    setTimeout(() => {
+                        loadingMask.style.display = "none";
+                        mainContent.classList.add("visible");
+                    }, 800);
+                }, 1500);
+            }
+        }, 50);
 
-const tank =
-document.getElementById("waterTank");
+        /* ================= */
+        /* 圖鑑卡片渲染 */
+        /* ================= */
+        const renderCards = (filterType = "all") => {
+            cardGrid.innerHTML = "";
 
-const loadingMask =
-document.getElementById("loadingMask");
+            const filteredData = filterType === "all"
+                ? creaturesData
+                : creaturesData.filter(item => item.rarity === filterType);
 
-/* ================= */
-/* 魔法粒子 */
-/* ================= */
+            filteredData.forEach(creature => {
+                const card = document.createElement("div");
+                card.className = "collection-card";
+                card.setAttribute("data-rarity", creature.rarity);
 
-for(let i=0;i<35;i++){
+                card.innerHTML = `
+            <span class="rarity-badge badge-${creature.rarity}">${creature.rarityName.toUpperCase()}</span>
+            <div class="card-img-wrapper">
+                <img src="${creature.img}" alt="${creature.name}" class="card-creature-img">
+            </div>
+            <div class="card-info">
+                <h4 class="card-title">${creature.name}</h4>
+                <p class="card-desc">${creature.desc}</p>
+            </div>
+        `;
 
-    const star =
-    document.createElement("div");
+                card.addEventListener("click", () => openCreatureModal(creature));
+                cardGrid.appendChild(card);
+            });
+        };
 
-    star.className = "sparkle";
+        /* ================= */
+        /* 篩選按鈕事件 */
+        /* ================= */
+        document.querySelectorAll(".filter-btn").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                document.querySelector(".filter-btn.active").classList.remove("active");
+                e.target.classList.add("active");
+                renderCards(e.target.getAttribute("data-filter"));
+            });
+        });
 
-    star.style.left =
-    Math.random()*100 + "%";
+        /* ================= */
+        /* 分頁過渡切換 */
+        /* ================= */
+        exploreBtn.addEventListener("click", () => {
+            mainContent.style.opacity = "0";
+            mainContent.style.transform = "translateY(-20px)";
 
-    star.style.animationDuration =
-    5 + Math.random()*10 + "s";
+            setTimeout(() => {
+                mainContent.style.display = "none";
+                gallerySection.style.display = "block";
+                renderCards("all");
 
-    star.style.animationDelay =
-    Math.random()*10 + "s";
+                setTimeout(() => {
+                    gallerySection.classList.add("active");
+                    // 進入收藏圖鑑後，解除鎖定，允許網頁出現垂直捲動條來瀏覽卡片
+                    document.body.style.setProperty("overflow-y", "auto", "important");
+                    document.body.style.setProperty("overflow-x", "hidden", "important");
+                }, 50);
+            }, 800);
+        });
 
-    document.body.appendChild(star);
-}
+        /* ================= */
+        /* 彈出視窗細節控制 (Modal) */
+        /* ================= */
+        const openCreatureModal = (creature) => {
+            modalImg.src = creature.img;
+            modalImg.alt = creature.name;
+            modalTitle.textContent = creature.name;
+            modalDesc.textContent = creature.longDesc;
+            modalId.textContent = `COLLECTION NO.${creature.id}`;
 
-/* ================= */
-/* Loading */
-/* ================= */
+            modalRarity.className = `modal-rarity badge-${creature.rarity}`;
+            modalRarity.textContent = creature.rarityName + "級收藏";
 
-let progress = 0;
+            modalOverlay.classList.add("open");
+        };
 
-const interval =
-setInterval(()=>{
+        const closeCreatureModal = () => {
+            modalOverlay.classList.remove("open");
+        };
 
-    progress++;
-
-    waterLevel.style.height =
-    progress + "%";
-
-    squid.style.bottom =
-    20 + (progress * 1.25) + "px";
-
-    percent.textContent =
-    progress + "%";
-
-    if(progress >= 100){
-
-        clearInterval(interval);
-
-        tank.classList.add("success");
-
-        document.querySelector(".loading-text")
-        .textContent =
-        "準備完成！";
-
-        document.querySelector(".sub-text")
-        .textContent =
-        "我來找你嚕";
-
-        setTimeout(()=>{
-
-            loadingMask.classList.add("fade-out");
-
-        },1500);
-    }
-
-},50);
-
-</script>
-
+        closeModal.addEventListener("click", closeCreatureModal);
+        modalOverlay.addEventListener("click", (e) => {
+            if (e.target === modalOverlay) closeCreatureModal();
+        });
+    </script>
 </body>
+
 </html>
