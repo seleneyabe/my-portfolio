@@ -307,12 +307,11 @@
             left: 0;
         }
 
-        /* --- 2. 技能頁面 (拉寬對齊版) --- */
+        /* --- 2. 技能頁面 --- */
         .skills-grid {
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
-            /* 讓容器寬度設定為 100%，就能完美對齊上方導覽列的 LYNN 跟 作品集 */
             width: 100%; 
             margin: 0 auto;
         }
@@ -322,8 +321,8 @@
             display: flex;
             flex-direction: row;
             align-items: center;
-            justify-content: center; /* 讓內容在卡片正中間對齊，平衡左右空間 */
-            gap: 6rem; /* 增加圖示與文字的距離，因應卡片拉寬 */
+            justify-content: center; 
+            gap: 6rem; 
             width: 100%;
         }
 
@@ -333,9 +332,8 @@
             background: rgba(255, 255, 255, 0.7);
         }
 
-        /* 左側：圖示與標題 */
         .skill-header {
-            width: 120px; /* 固定寬度確保文字列表對齊 */
+            width: 120px; 
             flex-shrink: 0;
             display: flex;
             flex-direction: column;
@@ -359,13 +357,12 @@
             text-align: center;
         }
 
-        /* 右側：技能文字 */
         .skill-list {
             display: flex;
             flex-direction: column;
             gap: 1.2rem; 
-            width: auto; /* 取消 100%，讓它在卡片中能置中 */
-            min-width: 280px; /* 給予最小寬度，防止字被擠壓 */
+            width: auto; 
+            min-width: 280px; 
         }
 
         .skill-item {
@@ -480,14 +477,36 @@
             transform: translateX(3px);
         }
 
-        /* --- RWD 響應式調整 --- */
+        /* --- RWD 平板尺寸調整 --- */
         @media (max-width: 850px) {
             .skill-card {
-                gap: 4rem; /* 平板縮小間距 */
+                gap: 4rem; 
             }
         }
 
+        /* --- RWD 手機尺寸調整 (包含導覽列修復) --- */
         @media (max-width: 600px) {
+            
+            /* ====== 導覽列 Nav 手機版修復 ====== */
+            .nav-container {
+                flex-direction: column; /* 將 Logo 和選單改為上下排列 */
+                padding: 1rem; /* 縮小內距 */
+                gap: 0.8rem; /* Logo 和選單的間隔 */
+            }
+
+            nav {
+                display: flex;
+                justify-content: center; /* 讓三個選項置中 */
+                gap: 1.5rem; /* 選項之間的平均間距 */
+                width: 100%;
+            }
+
+            nav a {
+                margin-left: 0; /* 移除桌機版會讓版面爆炸的左側間距 */
+                font-size: 0.95rem;
+            }
+            /* ================================== */
+
             .profile-meta {
                 flex-direction: column;
                 align-items: center;
@@ -508,11 +527,10 @@
                 padding: 2.5rem 1.5rem;
             }
             
-            /* 手機版技能卡片修復：取消居中，改為靠左 */
             .skill-card {
                 padding: 2rem 1.5rem !important;
                 gap: 1.5rem; 
-                justify-content: flex-start; /* 空間不夠時，恢復靠左對齊 */
+                justify-content: flex-start; 
             }
 
             .skill-header {
@@ -520,7 +538,7 @@
             }
 
             .skill-list {
-                width: 100%; /* 恢復填滿寬度 */
+                width: 100%; 
                 min-width: auto;
             }
 
@@ -641,7 +659,7 @@
             </div>
         </section>
 
-        <!-- 2. 技能頁面 (拉寬對齊版) -->
+        <!-- 2. 技能頁面 -->
         <section id="skills" class="page">
             <h2 class="section-title">專業技能</h2>
             <div class="skills-grid">
@@ -776,6 +794,22 @@
                     </div>
                 </a>
 
+                <!-- 作品 6：微軟仿切 -->
+                <a href="./微軟/微軟.html" class="portfolio-link-wrapper" target="_blank">
+                    <div class="glass-card portfolio-card">
+                        <div class="p-img-container">
+                            <img src="./img/微軟.png" style='background-size:cover;' alt="Microsoft 官網高仿切版" onerror="this.style.opacity='0';">
+                            <i class="fa-solid fa-code p-fallback-icon"></i>
+                        </div>
+                        <div class="p-content">
+                            <span class="p-tag">HTML & CSS / RWD</span>
+                            <h3>Microsoft仿切</h3>
+                            <p>參考微軟官網</p>
+                            <div class="p-footer">檢視作品 <i class="fa-solid fa-arrow-right"></i></div>
+                        </div>
+                    </div>
+                </a>
+
                 <!-- 作品 7：可愛Loading -->
                 <a href="./fishLoading.html" class="portfolio-link-wrapper" target="_blank">
                     <div class="glass-card portfolio-card">
@@ -786,6 +820,7 @@
                         <div class="p-content">
                             <span class="p-tag">HTML & CSS</span>
                             <h3>可愛Loading</h3>
+                            <p>沒放入專案的小烏賊</p>
                             <div class="p-footer">檢視 <i class="fa-solid fa-arrow-right"></i></div>
                         </div>
                     </div>
