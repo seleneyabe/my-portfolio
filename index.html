@@ -38,7 +38,6 @@
             min-height: 100vh;
         }
 
-        /* 環境光球 */
         .ambient-blob {
             position: fixed;
             border-radius: 50%;
@@ -66,19 +65,12 @@
         }
 
         @keyframes blobDrift {
-            from {
-                transform: translate(0, 0) scale(1);
-            }
-
-            to {
-                transform: translate(24px, 24px) scale(1.08);
-            }
+            from { transform: translate(0, 0) scale(1); }
+            to   { transform: translate(24px, 24px) scale(1.08); }
         }
 
         @media (prefers-reduced-motion: reduce) {
-            .ambient-blob {
-                animation: none;
-            }
+            .ambient-blob { animation: none; }
         }
 
         /* ─── 導覽列 ─── */
@@ -153,23 +145,13 @@
             animation: pageIn 0.5s ease forwards;
         }
 
-        .page.active {
-            display: block;
-        }
+        .page.active { display: block; }
 
         @keyframes pageIn {
-            from {
-                opacity: 0;
-                transform: translateY(12px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
 
-        /* 區塊標題 */
         .section-title {
             text-align: center;
             font-size: 1.75rem;
@@ -189,7 +171,6 @@
             border-radius: 2px;
         }
 
-        /* 玻璃卡片共用 */
         .glass-card {
             background: rgba(255, 255, 255, 0.55);
             backdrop-filter: blur(10px);
@@ -200,7 +181,6 @@
             transition: var(--trans);
         }
 
-        /* ─── 滾動淡入 ─── */
         .reveal {
             opacity: 0;
             transform: translateY(18px);
@@ -213,10 +193,7 @@
         }
 
         @media (prefers-reduced-motion: reduce) {
-            .reveal {
-                opacity: 1;
-                transform: none;
-            }
+            .reveal { opacity: 1; transform: none; }
         }
 
         /* ═══════════════════════════
@@ -233,51 +210,33 @@
             margin-bottom: 3rem;
         }
 
-        /* 動態漸層光環頭像 */
         .avatar-wrapper {
             position: relative;
             display: inline-block;
             border-radius: 50%;
             margin-bottom: 1.5rem;
-            /* 移除原本的 padding、background 與 box-shadow，交由偽元素處理 */
         }
 
-        /* 關鍵修復：利用 ::before 在背後建立一個會發光、擴散的動態模糊圖層 */
         .avatar-wrapper::before {
             content: '';
             position: absolute;
-            /* 控制光暈向外擴張的距離 */
-            top: -6px;
-            right: -6px;
-            bottom: -6px;
-            left: -6px;
+            top: -6px; right: -6px; bottom: -6px; left: -6px;
             background: linear-gradient(135deg, var(--accent), var(--accent-2), var(--accent-3), var(--accent));
             background-size: 300% 300%;
             border-radius: 50%;
             z-index: 0;
-            /* 使用 blur 產生柔和且自然的發光擴散感 */
             filter: blur(12px);
             animation: auraShift 5s ease infinite;
             opacity: 0.85;
-            /* 調整此數值可控制光暈亮度 (0~1) */
         }
 
         @keyframes auraShift {
-
-            0%,
-            100% {
-                background-position: 0% 50%;
-            }
-
-            50% {
-                background-position: 100% 50%;
-            }
+            0%, 100% { background-position: 0% 50%; }
+            50%       { background-position: 100% 50%; }
         }
 
         @media (prefers-reduced-motion: reduce) {
-            .avatar-wrapper::before {
-                animation: none;
-            }
+            .avatar-wrapper::before { animation: none; }
         }
 
         .avatar-img {
@@ -288,7 +247,6 @@
             object-fit: cover;
             border: 3px solid #fff;
             background-color: #ede9e3;
-            /* 必須加上 relative 與較高的 z-index，確保頭像疊加在光暈上方 */
             position: relative;
             z-index: 1;
         }
@@ -310,7 +268,6 @@
             letter-spacing: 3px;
         }
 
-        /* 數據統計列 */
         .stats-row {
             display: flex;
             justify-content: center;
@@ -351,7 +308,6 @@
             margin-top: 0.3rem;
         }
 
-        /* Meta 膠囊 */
         .meta-row {
             display: flex;
             justify-content: center;
@@ -374,10 +330,7 @@
             transition: var(--trans);
         }
 
-        .meta-pill i {
-            color: var(--accent);
-            font-size: 0.8rem;
-        }
+        .meta-pill i { color: var(--accent); font-size: 0.8rem; }
 
         .meta-pill:hover {
             background: rgba(143, 168, 200, 0.12);
@@ -386,14 +339,11 @@
             transform: translateY(-1px);
         }
 
-        /* 簡歷區塊 */
         .resume-section {
             margin-bottom: 2.5rem;
         }
 
-        .resume-section:last-child {
-            margin-bottom: 0;
-        }
+        .resume-section:last-child { margin-bottom: 0; }
 
         .resume-h3 {
             font-size: 1.05rem;
@@ -410,7 +360,6 @@
             line-height: 1.9;
         }
 
-        /* 特質標籤 */
         .trait-container {
             display: flex;
             gap: 0.7rem;
@@ -432,9 +381,7 @@
             cursor: default;
         }
 
-        .trait-tag i {
-            color: var(--accent);
-        }
+        .trait-tag i { color: var(--accent); }
 
         .trait-tag:hover {
             background: rgba(143, 168, 200, 0.12);
@@ -443,7 +390,6 @@
             transform: translateY(-1px);
         }
 
-        /* 時間軸 */
         .timeline-item {
             margin-bottom: 1.1rem;
             background: rgba(255, 255, 255, 0.4);
@@ -458,9 +404,7 @@
         .timeline-item::before {
             content: '';
             position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
+            left: 0; top: 0; bottom: 0;
             width: 3px;
             background: linear-gradient(180deg, var(--accent), var(--accent-2));
             border-radius: 3px 0 0 3px;
@@ -468,17 +412,9 @@
             transition: opacity 0.35s ease;
         }
 
-        .timeline-item:hover {
-            background: rgba(255, 255, 255, 0.72);
-        }
-
-        .timeline-item:hover::before {
-            opacity: 1;
-        }
-
-        .timeline-item:last-child {
-            margin-bottom: 0;
-        }
+        .timeline-item:hover { background: rgba(255, 255, 255, 0.72); }
+        .timeline-item:hover::before { opacity: 1; }
+        .timeline-item:last-child { margin-bottom: 0; }
 
         .timeline-header {
             display: flex;
@@ -489,15 +425,8 @@
             margin-bottom: 0.6rem;
         }
 
-        .timeline-title {
-            font-size: 1rem;
-            font-weight: 600;
-        }
-
-        .timeline-company {
-            font-size: 0.9rem;
-            color: var(--accent);
-        }
+        .timeline-title { font-size: 1rem; font-weight: 600; }
+        .timeline-company { font-size: 0.9rem; color: var(--accent); }
 
         .timeline-date {
             font-size: 0.78rem;
@@ -509,10 +438,7 @@
             border: 1px solid rgba(143, 168, 200, 0.15);
         }
 
-        .timeline-bullets {
-            list-style: none;
-            padding-left: 0.2rem;
-        }
+        .timeline-bullets { list-style: none; padding-left: 0.2rem; }
 
         .timeline-bullets li {
             font-size: 0.9rem;
@@ -530,6 +456,239 @@
             left: 0;
             font-size: 1.3rem;
             line-height: 1.35;
+        }
+
+        /* ═══════════════════════════
+           設計旅程 Timeline
+        ═══════════════════════════ */
+        .journey-timeline {
+            position: relative;
+            margin-top: 1.5rem;
+            padding-left: 50px;
+        }
+
+        /* 垂直串連線 */
+        .journey-timeline::before {
+            content: '';
+            position: absolute;
+            left: 14px;
+            top: 10px;
+            bottom: 10px;
+            width: 2px;
+            background: linear-gradient(180deg,
+                var(--accent)  0%,
+                var(--accent-2) 65%,
+                rgba(196, 168, 200, 0.18) 100%);
+        }
+
+        .journey-item {
+            position: relative;
+            margin-bottom: 14px;
+            cursor: pointer;
+        }
+
+        .journey-item:last-child { margin-bottom: 0; }
+
+        /* ── 節點 Dot ── */
+        .journey-dot {
+            position: absolute;
+            left: -45px;
+            top: 20px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #fff;
+            border: 2.5px solid var(--accent);
+            z-index: 2;
+            transition:
+                transform   0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
+                border-color 0.4s ease,
+                background  0.4s ease,
+                box-shadow  0.4s ease;
+        }
+
+        /* 外環（hover / active 時擴散） */
+        .journey-dot::before {
+            content: '';
+            position: absolute;
+            inset: -6px;
+            border-radius: 50%;
+            border: 1.5px solid transparent;
+            transform: scale(0.6);
+            opacity: 0;
+            transition:
+                border-color 0.4s ease,
+                transform    0.4s ease,
+                opacity      0.4s ease;
+        }
+
+        /* ── Hover 狀態 ── */
+        .journey-item:hover .journey-dot {
+            transform: scale(1.3);
+            border-color: var(--accent-2);
+            box-shadow:
+                0 0 0 4px rgba(143, 168, 200, 0.15),
+                0 0 16px rgba(143, 168, 200, 0.32);
+        }
+
+        .journey-item:hover .journey-dot::before {
+            border-color: rgba(143, 168, 200, 0.42);
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        /* ── Active 狀態：漸層填充 + 脈衝光環 ── */
+        .journey-item.active .journey-dot {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+            border-color: transparent;
+            transform: scale(1.15);
+            animation: dotPulseGlow 2.5s ease-in-out infinite;
+        }
+
+        .journey-item.active .journey-dot::before {
+            border-color: rgba(143, 168, 200, 0.35);
+            transform: scale(1);
+            opacity: 1;
+            animation: ringExpand 2.5s ease-in-out infinite;
+        }
+
+        @keyframes dotPulseGlow {
+            0%, 100% {
+                box-shadow:
+                    0 0 0 5px  rgba(143, 168, 200, 0.2),
+                    0 0 18px   rgba(143, 168, 200, 0.4);
+            }
+            50% {
+                box-shadow:
+                    0 0 0 9px  rgba(143, 168, 200, 0.07),
+                    0 0 28px   rgba(143, 168, 200, 0.14);
+            }
+        }
+
+        @keyframes ringExpand {
+            0%, 100% { transform: scale(1);   opacity: 0.85; }
+            50%       { transform: scale(1.7); opacity: 0.05; }
+        }
+
+        /* ── NOW 節點：待機閃爍 ── */
+        .journey-item:last-child:not(.active) .journey-dot {
+            border-color: var(--accent-2);
+            animation: nowPulse 2.2s ease-in-out infinite;
+        }
+
+        @keyframes nowPulse {
+            0%, 100% { box-shadow: 0 0 0 2px rgba(196, 168, 200, 0.15); }
+            50%       { box-shadow: 0 0 0 6px rgba(196, 168, 200, 0.05),
+                                    0 0 12px rgba(196, 168, 200, 0.2); }
+        }
+
+        /* ── 卡片 Card ── */
+        .journey-card {
+            background: rgba(255, 255, 255, 0.52);
+            border: 1px solid rgba(255, 255, 255, 0.82);
+            border-radius: 18px;
+            padding: 1.1rem 1.5rem;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            overflow: hidden;
+            max-height: 82px;   /* 收合高度 */
+            position: relative;
+            transition:
+                max-height   0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                transform    0.35s ease,
+                background   0.35s ease,
+                box-shadow   0.35s ease,
+                border-color 0.35s ease;
+        }
+
+        /* 左側漸層光條 */
+        .journey-card::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 13px; bottom: 13px;
+            width: 3px;
+            border-radius: 2px;
+            background: linear-gradient(180deg, var(--accent), var(--accent-2));
+            opacity: 0;
+            transition: opacity 0.35s ease;
+        }
+
+        /* 右上角高光 shimmer */
+        .journey-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 18px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.28), transparent 55%);
+            pointer-events: none;
+        }
+
+        .journey-year {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            letter-spacing: 1.5px;
+            color: var(--accent);
+            background: rgba(143, 168, 200, 0.1);
+            border: 1px solid rgba(143, 168, 200, 0.15);
+            margin-bottom: 0.35rem;
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+
+        .journey-card h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 0.6rem;
+            letter-spacing: 0.3px;
+        }
+
+        .journey-card p {
+            font-size: 0.88rem;
+            line-height: 1.85;
+            color: var(--text-light);
+        }
+
+        /* Hover：右移 + 邊框微亮 */
+        .journey-item:hover .journey-card {
+            transform: translateX(5px);
+            background: rgba(255, 255, 255, 0.72);
+            border-color: rgba(143, 168, 200, 0.26);
+            box-shadow: 0 6px 22px rgba(143, 168, 200, 0.1);
+        }
+
+        .journey-item:hover .journey-card::before {
+            opacity: 0.45;
+        }
+
+        /* Active：展開 + 強化玻璃效果 */
+        .journey-item.active .journey-card {
+            max-height: 300px;
+            background: rgba(255, 255, 255, 0.82);
+            border-color: rgba(143, 168, 200, 0.3);
+            box-shadow: 0 10px 32px rgba(143, 168, 200, 0.18);
+            transform: translateX(5px);
+        }
+
+        .journey-item.active .journey-card::before {
+            opacity: 1;
+        }
+
+        .journey-item.active .journey-year {
+            background: rgba(143, 168, 200, 0.18);
+            border-color: rgba(143, 168, 200, 0.25);
+        }
+
+        /* Reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            .journey-dot,
+            .journey-dot::before,
+            .journey-card {
+                animation: none !important;
+                transition-duration: 0.01ms !important;
+            }
+            .journey-item.active .journey-card { max-height: 300px; }
         }
 
         /* ═══════════════════════════
@@ -551,14 +710,11 @@
             position: relative;
         }
 
-        /* 右上角裝飾圓 */
         .skill-card::after {
             content: '';
             position: absolute;
-            right: -55px;
-            top: -55px;
-            width: 160px;
-            height: 160px;
+            right: -55px; top: -55px;
+            width: 160px; height: 160px;
             border-radius: 50%;
             background: linear-gradient(135deg, rgba(143, 168, 200, 0.07), rgba(196, 168, 200, 0.07));
             transition: transform 0.6s ease;
@@ -570,9 +726,7 @@
             background: rgba(255, 255, 255, 0.72);
         }
 
-        .skill-card:hover::after {
-            transform: scale(1.35);
-        }
+        .skill-card:hover::after { transform: scale(1.35); }
 
         .skill-header {
             width: 110px;
@@ -585,8 +739,7 @@
         }
 
         .skill-icon-box {
-            width: 58px;
-            height: 58px;
+            width: 58px; height: 58px;
             border-radius: 17px;
             background: linear-gradient(135deg, rgba(143, 168, 200, 0.14), rgba(196, 168, 200, 0.1));
             border: 1px solid rgba(255, 255, 255, 0.85);
@@ -595,11 +748,7 @@
             justify-content: center;
         }
 
-        .skill-icon {
-            font-size: 1.75rem;
-            color: var(--accent);
-            opacity: 0.85;
-        }
+        .skill-icon { font-size: 1.75rem; color: var(--accent); opacity: 0.85; }
 
         .skill-header h3 {
             font-size: 0.9rem;
@@ -609,7 +758,6 @@
             color: var(--text-main);
         }
 
-        /* 漸層分隔線 */
         .skill-divider {
             width: 1px;
             align-self: stretch;
@@ -625,15 +773,10 @@
             flex: 1;
         }
 
-        .skill-item {
-            display: flex;
-            align-items: center;
-            gap: 0.7rem;
-        }
+        .skill-item { display: flex; align-items: center; gap: 0.7rem; }
 
         .skill-dot {
-            width: 6px;
-            height: 6px;
+            width: 6px; height: 6px;
             border-radius: 50%;
             flex-shrink: 0;
             background: linear-gradient(135deg, var(--accent), var(--accent-2));
@@ -650,7 +793,6 @@
         /* ═══════════════════════════
            3. 作品集
         ═══════════════════════════ */
-        /* 篩選器 */
         .filter-tabs {
             display: flex;
             justify-content: center;
@@ -685,7 +827,6 @@
             font-weight: 600;
         }
 
-        /* 作品卡 */
         .portfolio-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
@@ -699,9 +840,7 @@
             transition: var(--trans);
         }
 
-        .portfolio-link-wrapper.hidden {
-            display: none;
-        }
+        .portfolio-link-wrapper.hidden { display: none; }
 
         .portfolio-card {
             overflow: hidden;
@@ -728,15 +867,12 @@
         }
 
         .p-img-container img {
-            width: 100%;
-            height: 100%;
+            width: 100%; height: 100%;
             object-fit: cover;
             transition: transform 0.5s ease;
         }
 
-        .portfolio-link-wrapper:hover .p-img-container img {
-            transform: scale(1.06);
-        }
+        .portfolio-link-wrapper:hover .p-img-container img { transform: scale(1.06); }
 
         .p-img-container::after {
             content: '';
@@ -747,14 +883,11 @@
             transition: opacity 0.4s ease;
         }
 
-        .portfolio-link-wrapper:hover .p-img-container::after {
-            opacity: 1;
-        }
+        .portfolio-link-wrapper:hover .p-img-container::after { opacity: 1; }
 
         .p-fallback-icon {
             position: absolute;
-            bottom: 12px;
-            right: 14px;
+            bottom: 12px; right: 14px;
             font-size: 1.1rem;
             color: rgba(143, 168, 200, 0.45);
             z-index: 2;
@@ -805,23 +938,13 @@
             font-weight: 500;
         }
 
-        .p-footer i {
-            transition: transform 0.3s ease;
-        }
-
-        .portfolio-link-wrapper:hover .p-footer i {
-            transform: translateX(4px);
-        }
+        .p-footer i { transition: transform 0.3s ease; }
+        .portfolio-link-wrapper:hover .p-footer i { transform: translateX(4px); }
 
         /* ─── RWD ─── */
         @media (max-width: 850px) {
-            .skill-card {
-                gap: 0;
-            }
-
-            .skill-divider {
-                margin: 0 2rem;
-            }
+            .skill-card { gap: 0; }
+            .skill-divider { margin: 0 2rem; }
         }
 
         @media (max-width: 600px) {
@@ -831,103 +954,52 @@
                 gap: 0.65rem;
             }
 
-            nav {
-                gap: 0.1rem;
-            }
+            nav { gap: 0.1rem; }
+            nav a { font-size: 0.84rem; padding: 0.38rem 0.95rem; }
 
-            nav a {
-                font-size: 0.84rem;
-                padding: 0.38rem 0.95rem;
-            }
+            .about-layout { padding: 2.5rem 1.5rem; }
 
-            .about-layout {
-                padding: 2.5rem 1.5rem;
-            }
+            .stats-row { gap: 0.75rem; }
+            .stat-item { padding: 0.65rem 1rem; min-width: 72px; }
+            .stat-num  { font-size: 1.3rem; }
 
-            .stats-row {
-                gap: 0.75rem;
-            }
+            .meta-row { gap: 0.5rem; }
 
-            .stat-item {
-                padding: 0.65rem 1rem;
-                min-width: 72px;
-            }
+            .timeline-header { flex-direction: column; gap: 0.35rem; }
 
-            .stat-num {
-                font-size: 1.3rem;
-            }
+            .skill-card { padding: 2rem 1.5rem; flex-direction: row; align-items: flex-start; }
+            .skill-header { width: 78px; }
+            .skill-icon-box { width: 48px; height: 48px; border-radius: 14px; }
+            .skill-icon { font-size: 1.4rem; }
+            .skill-divider { margin: 0 1.2rem; }
+            .skill-header h3 { font-size: 0.83rem; }
+            .skill-item-text { font-size: 0.9rem; }
 
-            .meta-row {
-                gap: 0.5rem;
-            }
+            .filter-tabs { gap: 0.45rem; }
+            .filter-btn { padding: 0.42rem 0.95rem; font-size: 0.81rem; }
 
-            .timeline-header {
-                flex-direction: column;
-                gap: 0.35rem;
-            }
+            .portfolio-grid { grid-template-columns: 1fr; gap: 1.5rem; }
 
-            .skill-card {
-                padding: 2rem 1.5rem;
-                flex-direction: row;
-                align-items: flex-start;
-            }
-
-            .skill-header {
-                width: 78px;
-            }
-
-            .skill-icon-box {
-                width: 48px;
-                height: 48px;
-                border-radius: 14px;
-            }
-
-            .skill-icon {
-                font-size: 1.4rem;
-            }
-
-            .skill-divider {
-                margin: 0 1.2rem;
-            }
-
-            .skill-header h3 {
-                font-size: 0.83rem;
-            }
-
-            .skill-item-text {
-                font-size: 0.9rem;
-            }
-
-            .filter-tabs {
-                gap: 0.45rem;
-            }
-
-            .filter-btn {
-                padding: 0.42rem 0.95rem;
-                font-size: 0.81rem;
-            }
-
-            .portfolio-grid {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
+            /* Journey - 行動裝置微調 */
+            .journey-timeline { padding-left: 42px; }
+            .journey-timeline::before { left: 12px; }
+            .journey-dot { left: -37px; top: 18px; width: 16px; height: 16px; }
+            .journey-dot::before { inset: -5px; }
         }
     </style>
 </head>
 
 <body>
 
-    <!-- 環境光球裝飾 -->
     <div class="ambient-blob blob-a" aria-hidden="true"></div>
     <div class="ambient-blob blob-b" aria-hidden="true"></div>
 
-    <!-- 導覽列 -->
     <header>
         <div class="nav-container">
             <div class="logo">LYNN YEH</div>
             <nav>
-                <a href="#about" id="link-about">關於我</a>
-                <a href="#skills" id="link-skills">技能</a>
+                <a href="#about"     id="link-about">關於我</a>
+                <a href="#skills"    id="link-skills">技能</a>
                 <a href="#portfolio" id="link-portfolio">作品集</a>
             </nav>
         </div>
@@ -942,7 +1014,6 @@
                 <div class="profile-header">
                     <h2 class="about-name">葉真伶<span>Lynn Yeh</span></h2>
 
-                    <!-- 數字統計 -->
                     <div class="stats-row">
                         <div class="stat-item">
                             <span class="stat-num">7+</span>
@@ -958,7 +1029,6 @@
                         </div>
                     </div>
 
-                    <!-- 身份膠囊 -->
                     <div class="meta-row">
                         <span class="meta-pill"><i class="fa-solid fa-location-dot"></i>台中</span>
                         <span class="meta-pill"><i class="fa-solid fa-palette"></i>UI / UX Designer</span>
@@ -983,39 +1053,61 @@
                 </div>
 
                 <div class="resume-section reveal">
-                    <h3 class="resume-h3">工作經驗</h3>
+                    <h3 class="resume-h3">設計旅程</h3>
 
-                    <div class="timeline-item">
-                        <div class="timeline-header">
-                            <span class="timeline-title">行政人事</span>
-                        </div>
-                        <ul class="timeline-bullets">
-                            <li>行政事務與文件管理</li>
-                            <li>會議安排及跨部門協調</li>
-                            <li>員工出勤及報表製作</li>
-                        </ul>
-                    </div>
+                    <div class="journey-timeline">
 
-                    <div class="timeline-item">
-                        <div class="timeline-header">
-                            <span class="timeline-title">品檢人員</span>
+                        <div class="journey-item active">
+                            <div class="journey-dot"></div>
+                            <div class="journey-card">
+                                <div class="journey-year">2025</div>
+                                <h4>設計思維培養</h4>
+                                <p>
+                                    開始接觸影音剪輯與視覺設計，
+                                    學習 Photoshop、Premiere Pro，
+                                    建立對畫面與色彩的敏銳度。
+                                </p>
+                            </div>
                         </div>
-                        <ul class="timeline-bullets">
-                            <li>原料進料檢驗與品質控管</li>
-                            <li>品管儀器維護與校正</li>
-                            <li>品質文件整理與歸檔</li>
-                        </ul>
-                    </div>
 
-                    <div class="timeline-item">
-                        <div class="timeline-header">
-                            <span class="timeline-title">門市銷售</span>
+                        <div class="journey-item">
+                            <div class="journey-dot"></div>
+                            <div class="journey-card">
+                                <div class="journey-year">2025</div>
+                                <h4>影音創作啟程</h4>
+                                <p>
+                                    透過企劃、分鏡與剪輯練習，
+                                    開始理解使用者觀看流程與資訊傳達的重要性。
+                                </p>
+                            </div>
                         </div>
-                        <ul class="timeline-bullets">
-                            <li>庫存管理與補貨作業</li>
-                            <li>商品陳列與賣場維護</li>
-                            <li>顧客服務與商品諮詢</li>
-                        </ul>
+
+                        <div class="journey-item">
+                            <div class="journey-dot"></div>
+                            <div class="journey-card">
+                                <div class="journey-year">2026</div>
+                                <h4>投入 UI / UX 領域</h4>
+                                <p>
+                                    學習 Figma、Wireframe、
+                                    Prototype 製作與 Design System 建立，
+                                    開始設計完整介面。
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="journey-item">
+                            <div class="journey-dot"></div>
+                            <div class="journey-card">
+                                <div class="journey-year">NOW</div>
+                                <h4>持續精進前端開發</h4>
+                                <p>
+                                    透過 HTML、CSS、JavaScript
+                                    將設計稿轉換成實際互動作品，
+                                    逐步累積 UI / UX 與前端整合能力。
+                                </p>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
@@ -1065,12 +1157,9 @@
                     </div>
                     <div class="skill-divider"></div>
                     <div class="skill-list">
-                        <div class="skill-item"><span class="skill-dot"></span><span class="skill-item-text">Figma 介面設計
-                                &amp; prototype</span></div>
-                        <div class="skill-item"><span class="skill-dot"></span><span
-                                class="skill-item-text">網頁設計稿規劃與製作</span></div>
-                        <div class="skill-item"><span class="skill-dot"></span><span class="skill-item-text">Design
-                                System 建立</span></div>
+                        <div class="skill-item"><span class="skill-dot"></span><span class="skill-item-text">Figma 介面設計 &amp; prototype</span></div>
+                        <div class="skill-item"><span class="skill-dot"></span><span class="skill-item-text">網頁設計稿規劃與製作</span></div>
+                        <div class="skill-item"><span class="skill-dot"></span><span class="skill-item-text">Design System 建立</span></div>
                     </div>
                 </div>
 
@@ -1083,12 +1172,9 @@
                     </div>
                     <div class="skill-divider"></div>
                     <div class="skill-list">
-                        <div class="skill-item"><span class="skill-dot"></span><span class="skill-item-text">HTML5 /
-                                CSS3 網頁切版</span></div>
-                        <div class="skill-item"><span class="skill-dot"></span><span class="skill-item-text">Flexbox /
-                                Grid 佈局</span></div>
-                        <div class="skill-item"><span class="skill-dot"></span><span class="skill-item-text">響應式網頁開發
-                                (RWD)</span></div>
+                        <div class="skill-item"><span class="skill-dot"></span><span class="skill-item-text">HTML5 / CSS3 網頁切版</span></div>
+                        <div class="skill-item"><span class="skill-dot"></span><span class="skill-item-text">Flexbox / Grid 佈局</span></div>
+                        <div class="skill-item"><span class="skill-dot"></span><span class="skill-item-text">響應式網頁開發 (RWD)</span></div>
                     </div>
                 </div>
 
@@ -1101,14 +1187,10 @@
                     </div>
                     <div class="skill-divider"></div>
                     <div class="skill-list">
-                        <div class="skill-item"><span class="skill-dot"></span><span class="skill-item-text">Adobe
-                                Photoshop</span></div>
-                        <div class="skill-item"><span class="skill-dot"></span><span class="skill-item-text">Adobe
-                                Illustrator</span></div>
-                        <div class="skill-item"><span class="skill-dot"></span><span class="skill-item-text">Adobe
-                                Premiere Pro</span></div>
-                        <div class="skill-item"><span class="skill-dot"></span><span
-                                class="skill-item-text">企劃分鏡與基礎特效</span></div>
+                        <div class="skill-item"><span class="skill-dot"></span><span class="skill-item-text">Adobe Photoshop</span></div>
+                        <div class="skill-item"><span class="skill-dot"></span><span class="skill-item-text">Adobe Illustrator</span></div>
+                        <div class="skill-item"><span class="skill-dot"></span><span class="skill-item-text">Adobe Premiere Pro</span></div>
+                        <div class="skill-item"><span class="skill-dot"></span><span class="skill-item-text">企劃分鏡與基礎特效</span></div>
                     </div>
                 </div>
 
@@ -1119,7 +1201,6 @@
         <section id="portfolio" class="page">
             <h2 class="section-title">精選作品</h2>
 
-            <!-- 篩選器 -->
             <div class="filter-tabs" role="group" aria-label="作品篩選">
                 <button class="filter-btn active" data-filter="all">全部</button>
                 <button class="filter-btn" data-filter="figma">Figma</button>
@@ -1129,7 +1210,6 @@
 
             <div class="portfolio-grid">
 
-                <!-- 作品 1 -->
                 <a href="https://www.figma.com/proto/hAftyHzIVQiV7Yb0Qa7brz/%E7%81%B0%E7%89%88%E8%A9%A6%E5%88%87?node-id=0-1&p=f&t=8aBCjfQJ72NaRef3-0&scaling=scale-down&content-scaling=fixed&starting-point-node-id=295%3A1480&show-proto-sidebar=1"
                     class="portfolio-link-wrapper reveal" data-category="figma" target="_blank">
                     <div class="glass-card portfolio-card">
@@ -1146,7 +1226,6 @@
                     </div>
                 </a>
 
-                <!-- 作品 2 -->
                 <a href="https://www.figma.com/proto/hAftyHzIVQiV7Yb0Qa7brz/%E7%81%B0%E7%89%88%E8%A9%A6%E5%88%87?node-id=0-1&p=f&t=8aBCjfQJ72NaRef3-0&scaling=scale-down&content-scaling=fixed&starting-point-node-id=516%3A2722&show-proto-sidebar=1"
                     class="portfolio-link-wrapper reveal" data-category="figma" target="_blank">
                     <div class="glass-card portfolio-card">
@@ -1163,7 +1242,6 @@
                     </div>
                 </a>
 
-                <!-- 作品 3 -->
                 <a href="./五子棋-2.html" class="portfolio-link-wrapper reveal" data-category="js" target="_blank">
                     <div class="glass-card portfolio-card">
                         <div class="p-img-container">
@@ -1179,7 +1257,6 @@
                     </div>
                 </a>
 
-                <!-- 作品 4 -->
                 <a href="./spotlight.html" class="portfolio-link-wrapper reveal" data-category="js" target="_blank">
                     <div class="glass-card portfolio-card">
                         <div class="p-img-container">
@@ -1195,7 +1272,6 @@
                     </div>
                 </a>
 
-                <!-- 作品 5 -->
                 <a href="./colorGame.html" class="portfolio-link-wrapper reveal" data-category="js" target="_blank">
                     <div class="glass-card portfolio-card">
                         <div class="p-img-container">
@@ -1211,7 +1287,6 @@
                     </div>
                 </a>
 
-                <!-- 作品 7 -->
                 <a href="./fishLoading.html" class="portfolio-link-wrapper reveal" data-category="html" target="_blank">
                     <div class="glass-card portfolio-card">
                         <div class="p-img-container">
@@ -1221,7 +1296,7 @@
                         <div class="p-content">
                             <span class="p-tag">HTML &amp; JavaScript</span>
                             <h3>收藏卡展館</h3>
-                            <div class="p-footer">檢視寶藏<i class="fa-solid fa-arrow-right"></i></div>
+                            <div class="p-footer">檢視寶藏 <i class="fa-solid fa-arrow-right"></i></div>
                         </div>
                     </div>
                 </a>
@@ -1245,6 +1320,7 @@
                 activePage.classList.add('active');
                 triggerReveal(activePage);
             }
+
             const activeLink = document.querySelector(`nav a[href="${hash}"]`);
             if (activeLink) activeLink.classList.add('active');
         }
@@ -1271,6 +1347,14 @@
                     const match = filter === 'all' || card.dataset.category === filter;
                     card.classList.toggle('hidden', !match);
                 });
+            });
+        });
+
+        /* ─── 設計旅程互動 ─── */
+        document.querySelectorAll('.journey-item').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelectorAll('.journey-item').forEach(el => el.classList.remove('active'));
+                item.classList.add('active');
             });
         });
     </script>
