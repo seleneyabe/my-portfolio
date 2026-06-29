@@ -8,8 +8,8 @@
         @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&display=swap');
 
         :root {
-            --forest-dark: #0a1914;
-            --forest-mid: #123524;
+            --forest-dark: rgba(10, 25, 20, 0.85);
+            --forest-mid: rgba(18, 53, 36, 0.6);
             --magic-glow: #00ffcc;
             --magic-gold: #ffdf00;
             --glass-bg: rgba(20, 45, 35, 0.4);
@@ -28,7 +28,14 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: radial-gradient(circle at 50% 30%, var(--forest-mid) 0%, var(--forest-dark) 80%, #000000 100%);
+            /* 套用自訂背景圖片，並疊加半透明的魔法漸層讓 UI 保持清晰 */
+            background: radial-gradient(circle at 50% 30%, var(--forest-mid) 0%, var(--forest-dark) 80%, #000000 100%), 
+                        url('./img/森林.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            
             font-family: 'Noto Serif TC', serif;
             color: white;
             overflow: hidden;
@@ -135,7 +142,7 @@
             width: 80px;
             height: 80px;
             font-size: 2.5rem;
-            cursor: none; /* 隱藏預設鼠標 */
+            cursor: none;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             box-shadow: 0 8px 20px rgba(0,0,0,0.4), inset 0 0 15px rgba(255,255,255,0.05);
             position: relative;
@@ -143,7 +150,6 @@
             backdrop-filter: blur(5px);
         }
 
-        /* 按鈕懸停魔法效果 */
         .option-btn::before {
             content: '';
             position: absolute;
@@ -184,7 +190,6 @@
             transition: all 0.3s;
         }
 
-        /* 螢火蟲粒子動畫 */
         .firefly {
             position: absolute;
             background: var(--magic-gold);
@@ -208,7 +213,6 @@
             50% { transform: translateY(-10px); }
         }
 
-        /* 自定義魔法鼠標 */
         #magic-cursor {
             position: fixed;
             top: 0;
@@ -225,7 +229,6 @@
             mix-blend-mode: screen;
         }
 
-        /* 鼠標點擊時的波紋效果 */
         .cursor-click {
             width: 50px !important;
             height: 50px !important;
@@ -262,12 +265,29 @@
 </div>
 
 <script>
+    // === 音效設定區 ===
+    // 建立音效物件 (請確保你的資料夾中有對應的音效檔案)
+    const sfxClick = new Audio('./sounds/click.mp3');
+    const sfxWin = new Audio('./sounds/win.mp3');
+    const sfxLose = new Audio('./sounds/lose.mp3');
+    const sfxDraw = new Audio('./sounds/draw.mp3');
+    
+    // 設定音量 (0.0 到 1.0)
+    sfxClick.volume = 0.6;
+    sfxWin.volume = 0.8;
+    sfxLose.volume = 0.8;
+    sfxDraw.volume = 0.7;
+
     let playerScore = 0;
     let compScore = 0;
     const choices = ['✊', '✌️', '✋'];
 
     // 遊戲邏輯
     function play(playerChoice) {
+        // 播放點擊音效
+        sfxClick.currentTime = 0; // 重置音效時間，讓快速點擊不卡頓
+        sfxClick.play().catch(e => console.log("等待使用者互動以播放音效"));
+
         const compChoice = choices[Math.floor(Math.random() * 3)];
         
         // 加上簡單的彈跳動畫重置效果
@@ -306,15 +326,29 @@
             resultEl.innerHTML = "✨ 試煉通過！森林賦予你魔力！";
             resultEl.style.color = "#00ffcc";
             resultEl.style.textShadow = "0 0 10px rgba(0,255,204,0.8)";
+            
+            // 播放勝利音效
+            sfxWin.currentTime = 0;
+            sfxWin.play().catch(e => {});
+
         } else if (res === 'lose') {
             compScore++;
             resultEl.innerHTML = "🥀 靈力不足...被森林之靈擊敗。";
             resultEl.style.color = "#ff6b6b";
             resultEl.style.textShadow = "0 0 10px rgba(255,107,107,0.8)";
+            
+            // 播放失敗音效
+            sfxLose.currentTime = 0;
+            sfxLose.play().catch(e => {});
+
         } else {
             resultEl.innerHTML = "🌫️ 勢均力敵，魔力互相抵消。";
             resultEl.style.color = "#ffd700";
             resultEl.style.textShadow = "0 0 10px rgba(255,223,0,0.8)";
+            
+            // 播放平手音效
+            sfxDraw.currentTime = 0;
+            sfxDraw.play().catch(e => {});
         }
         
         document.getElementById('player-score').innerText = playerScore;
@@ -332,11 +366,9 @@
             f.style.left = Math.random() * 100 + 'vw';
             f.style.top = Math.random() * 100 + 'vh';
             
-            // 隨機動畫時間與延遲，讓動作不一致
             f.style.animationDuration = (Math.random() * 5 + 5) + 's';
             f.style.animationDelay = Math.random() * 5 + 's';
             
-            // 隨機顏色（偏金或偏綠）
             if(Math.random() > 0.5) {
                 f.style.background = '#00ffcc';
                 f.style.boxShadow = '0 0 10px 2px #00ffcc, 0 0 20px 4px rgba(0, 255, 204, 0.4)';
@@ -351,7 +383,6 @@
     const cursor = document.getElementById('magic-cursor');
     
     document.addEventListener('mousemove', (e) => {
-        // 使用 requestAnimationFrame 讓滑鼠跟隨更滑順
         requestAnimationFrame(() => {
             cursor.style.left = e.clientX + 'px';
             cursor.style.top = e.clientY + 'px';
@@ -366,7 +397,6 @@
         cursor.classList.remove('cursor-click');
     });
 
-    // 當滑鼠移到按鈕上時，光暈放大
     function hoverCursor() {
         cursor.style.width = '40px';
         cursor.style.height = '40px';
