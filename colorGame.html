@@ -259,8 +259,9 @@
         <button class="btn" onclick="location.reload()">重新挑戰</button>
     </div>
 
+
     <script>
-        // 移除了舊版的 soundClick 與 soundWin 綁定
+        // DOM 元素綁定
         const el = {
             board: document.getElementById('game-board'),
             timer: document.getElementById('timer'),
@@ -281,44 +282,61 @@
             timerId: null
         };
 
-        // 內建 Web Audio API 音效生成器
-        function playSound(type) {
-            try {
+        // 1. 宣告全域的音效環境變數
+        let audioCtx = null;
+
+        // 2. 建立解鎖音效的函數
+        function initAudio() {
+            if (!audioCtx) {
                 const AudioContext = window.AudioContext || window.webkitAudioContext;
-                if (!AudioContext) return;
-                const ctx = new AudioContext();
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                
+                if (AudioContext) {
+                    audioCtx = new AudioContext();
+                }
+            }
+            // 關鍵：如果瀏覽器將音效凍結，這裡將其喚醒
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        // 3. 改寫發聲函數，共用同一個 audioCtx
+        function playSound(type) {
+            if (!audioCtx) return; // 如果還沒解鎖，就不發聲
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+
                 if (type === 'click') {
                     osc.type = 'sine';
-                    osc.frequency.setValueAtTime(800, ctx.currentTime);
-                    gain.gain.setValueAtTime(0.1, ctx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
-                    osc.connect(gain); gain.connect(ctx.destination);
-                    osc.start(); osc.stop(ctx.currentTime + 0.1);
+                    osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+                    osc.connect(gain); gain.connect(audioCtx.destination);
+                    osc.start(); osc.stop(audioCtx.currentTime + 0.1);
                 } else if (type === 'wrong') {
                     osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(150, ctx.currentTime);
-                    osc.frequency.linearRampToValueAtTime(100, ctx.currentTime + 0.2);
-                    gain.gain.setValueAtTime(0.2, ctx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
-                    osc.connect(gain); gain.connect(ctx.destination);
-                    osc.start(); osc.stop(ctx.currentTime + 0.2);
+                    osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                    osc.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.2);
+                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+                    osc.connect(gain); gain.connect(audioCtx.destination);
+                    osc.start(); osc.stop(audioCtx.currentTime + 0.2);
                 } else if (type === 'win') {
                     osc.type = 'triangle';
-                    osc.frequency.setValueAtTime(523.25, ctx.currentTime); 
-                    osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.1);
-                    osc.frequency.setValueAtTime(783.99, ctx.currentTime + 0.2);
-                    gain.gain.setValueAtTime(0.15, ctx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
-                    osc.connect(gain); gain.connect(ctx.destination);
-                    osc.start(); osc.stop(ctx.currentTime + 0.5);
+                    osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+                    osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1);
+                    osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2);
+                    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+                    osc.connect(gain); gain.connect(audioCtx.destination);
+                    osc.start(); osc.stop(audioCtx.currentTime + 0.5);
                 }
             } catch (e) { console.log('音效受限'); }
         }
 
         function startGame() {
+            initAudio(); // 4. 在玩家點擊「開始測試」時，正式解鎖音效！
+
             game.active = true;
             el.mask.classList.add('hidden');
             renderBoard();
@@ -330,7 +348,6 @@
                 game.timeLeft--;
                 el.timer.textContent = game.timeLeft.toString().padStart(2, '0');
 
-                // 進度條與顏色邏輯
                 const percent = (game.timeLeft / 30) * 100;
                 el.progress.style.width = percent + '%';
 
@@ -344,19 +361,15 @@
         }
 
         function renderBoard() {
-            // 清除舊色塊
             const currentBlocks = el.board.querySelectorAll('.block');
             currentBlocks.forEach(b => b.remove());
 
-            // 難度公式：1-2關(2x2), 3-4關(3x3)... 最高 10x10
             const size = Math.min(Math.floor((game.level + 1) / 2) + 1, 10);
             el.board.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
 
-            // 顏色演算法
             const h = Math.floor(Math.random() * 360);
             const s = 50 + Math.random() * 20;
             const l = 40 + Math.random() * 20;
-            // 隨關卡增加，色差縮小
             const diff = Math.max(1.2, 14 - (game.level * 1.2));
 
             const total = size * size;
@@ -385,7 +398,7 @@
 
         function nextLevel() {
             if (!game.active) return;
-            playSound('click'); // 使用合成音效取代實體檔案
+            playSound('click');
             game.score += game.level * 25;
             if (game.level < 10) game.level++;
             el.lvl.textContent = game.level.toString().padStart(2, '0');
@@ -395,7 +408,7 @@
 
         function wrongClick() {
             if (!game.active) return;
-            playSound('wrong'); // 播放專屬錯誤音效
+            playSound('wrong');
             el.board.classList.add('shake');
             setTimeout(() => el.board.classList.remove('shake'), 400);
             game.timeLeft = Math.max(0, game.timeLeft - 3);
@@ -415,8 +428,8 @@
         function endGame() {
             game.active = false;
             clearInterval(game.timerId);
-            
-            playSound('win'); // 播放結束音效
+
+            playSound('win');
 
             el.finalScore.textContent = game.score;
             el.rank.textContent = getRank(game.score);
