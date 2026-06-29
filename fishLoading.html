@@ -35,6 +35,49 @@
         }
 
         /* ================= */
+        /* 新增：靜音按鈕樣式 */
+        /* ================= */
+        .audio-toggle-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--glass-border);
+            color: white;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            z-index: 999; /* 低於 loading(9999) 與彈窗(10000)，但高於一般內容 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .audio-toggle-btn.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .audio-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(56, 189, 248, 0.6);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+            transform: scale(1.05);
+        }
+
+        .audio-toggle-btn svg {
+            width: 22px;
+            height: 22px;
+            fill: currentColor;
+        }
+
+        /* ================= */
         /* 主網頁首頁 (Hero) */
         /* ================= */
         .main-content {
@@ -742,6 +785,14 @@
 
 <body>
 
+    <!-- 新增：全域浮動毛玻璃靜音控制按鍵 -->
+    <button class="audio-toggle-btn" id="audioToggleBtn" title="切換背景音樂靜音">
+        <!-- 預設為播放狀態圖示 -->
+        <svg id="audioIcon" viewBox="0 0 24 24">
+            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+        </svg>
+    </button>
+
     <main class="main-content" id="mainContent">
         <h1 class="main-title">魔法海洋</h1>
         <p class="main-subtitle">深海的奇幻旅程已經為您開啟</p>
@@ -814,16 +865,17 @@
 
     <script>
         /* ================= */
-        /* 音效初始化 */
+        /* 音效與圖資初始化 */
         /* ================= */
         const bgMusic = new Audio('./sounds/sea.mp3');
         bgMusic.loop = true; // 設定背景音樂循環播放
 
         const clickSound = new Audio('./sounds/click.mp3');
 
-        /* ================= */
-        /* 核心資料定義（套用圖片檔名） */
-        /* ================= */
+        // 新增：靜音與播放狀態的 SVG 路徑定義
+        const iconPlayingPath = `<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>`;
+        const iconMutedPath = `<path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.21.05-.42.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>`;
+
         const creaturesData = [
             { id: "001", name: "嚮導小烏賊", rarity: "normal", rarityName: "普通", img: "./img/烏賊.png", desc: "魔法海洋的資深引路人。天生樂觀，最喜歡做的事情就是往空水缸中注入滿滿的魔法海水。", longDesc: "作為魔法海洋底層的辛勤勞動者，嚮導小烏賊體內蘊含著純淨的水晶魔力。牠們成群結隊活動時，能在一瞬間聚集大量的水流。如果你在深海迷路，跟著牠們活潑的觸手擺動方向走準沒錯。" },
             { id: "002", name: "夜光水母", rarity: "rare", rarityName: "稀有", img: "./img/水母.png", desc: "在漆黑的幽冥深海中閃爍著微弱藍光，據說能指引迷途旅人的靈魂。", longDesc: "夜光螢火水母不靠雙眼視物，而是感應海洋中的魔力震動。牠們傘狀體下方的微光是由海洋古老咒語轉化而成的生物螢光。旅人若將其輕輕托起，能在短時間內獲得看穿深海迷霧的魔幻視界。" },
@@ -834,7 +886,7 @@
             { id: "007", name: "琉璃珊瑚海龍", rarity: "epic", rarityName: "史詩", img: "./img/珊瑚龍.png", desc: "穿梭於古老珊瑚礁間的優雅使者，頭頂的珊瑚角散發著溫暖的微光。", longDesc: "被認為是珊瑚礁守護者的琉璃海龍，擁有如精靈般半透明的薄翼。牠們輕盈地游動時，會灑下細碎的星光粉末，這些粉末能加速海底植物的生長。據說只有內心純潔的潛水者，才能在陽光灑落的海溝深處瞥見牠們優雅的身影。" },
             { id: "008", name: "朝陽幻彩胖胖魚", rarity: "normal", rarityName: "普通", img: "./img/胖胖魚.png", desc: "擁有如晨曦般溫暖色彩的圓潤小魚，總是用充滿好奇的大眼睛觀察世界。", longDesc: "這是一種隨處可見卻十分討喜的魔法小魚。牠們圓滾滾的肚子裡儲存著純淨的海水魔力，當牠們感到開心時，吐出的泡泡會在陽光下折射出彩虹的光芒。雖然沒有強大的魔法，但牠們群聚時的歡樂氣息能驅散深海的幽暗與憂愁。" },
             { id: "009", name: "翡翠星晶海龜", rarity: "legendary", rarityName: "傳說", img: "./img/海龜.png", desc: "背甲上鑲嵌著能吸收星光的神秘紋路，是海洋中最長壽且充滿智慧的存在。", longDesc: "傳說中馱著失落古文明記憶的古老生物。翡翠星晶海龜的移動速度雖然緩慢，但牠們的龜殼是一個小型的魔法力場，能抵禦一切深海的暗流與風暴。當夜空星光最明亮時，牠們會浮出水面，將星光轉化為純粹的魔力儲存於背甲之中。" },
-            { id: "010", name: "星宿微光海星", rarity: "rare", rarityName: "稀有", img: "./img/海星.png", desc: "身體表面印有璀璨的星象軌跡，喜歡在淺灘的礁石上吸收月光。", longDesc: "與其說是海洋生物，不如說是隕落海底的星星碎片。星宿微光海星的觸角上連接著微小的魔力節點，能在黑暗中勾勒出星座的形狀。迷失方向的航海家只要看著牠們發光的軌跡，就能找到通往安全海域的正確航線。" },
+            { id: "010", name: "星宿微光海星", rarity: "rare", rarityName: "稀有", img: "./img/海星.png", desc: "身體表面印有璀璨的星象軌跡，喜歡在淺灘的礁石上吸收月光。", longDesc: "與其說是海洋生物，不如說是隕落海底的星星碎片。星宿微光海星的觸角上連連接著微小的魔力節點，能在黑暗中勾勒出星座的形狀。迷失方向的航海家只要看著牠們發光的軌跡，就能找到通往安全海域的正確航線。" },
             { id: "011", name: "星眸幽靈小章魚", rarity: "rare", rarityName: "稀有", img: "./img/小章魚.png", desc: "擁有裝滿星辰般水汪汪的大眼睛，性格害羞，緊張時會噴出紫色的星砂墨汁。", longDesc: "隱居在淺海沙地裡的害羞小傢伙。星眸幽靈小章魚非常膽小，遇到陌生生物時會迅速用觸手捂住自己。牠們的眼睛深邃如同宇宙，據說盯著牠們的眼睛看，能看見自己內心最純粹的願望。如果幸運獲得牠的信任，牠會用觸手輕輕觸碰你的指尖。" },
             { id: "012", name: "星幻微笑真珠貝", rarity: "epic", rarityName: "史詩", img: "./img/貝殼.png", desc: "孕育著蘊含龐大魔力的星幻珍珠，貝殼開合間彷彿能聽見悠遠的海洋搖籃曲。", longDesc: "生長在魔力匯聚的深海熱泉旁，星幻微笑真珠貝需要吸收數百年的魔法潮汐才能孕育出一顆擁有自主意識的珍珠。這顆珍珠不僅會散發出柔和的粉色星斑，還會對友善的靠近者露出可愛的微笑。傳說將其帶在身邊，能永保心靈的平靜與愉悅。" }
         ];
@@ -851,6 +903,10 @@
         const gallerySection = document.getElementById("gallerySection");
         const cardGrid = document.getElementById("cardGrid");
         const exploreBtn = document.getElementById("exploreBtn");
+        
+        // 新增：音效控制元件
+        const audioToggleBtn = document.getElementById("audioToggleBtn");
+        const audioIcon = document.getElementById("audioIcon");
 
         // Modal 元件
         const modalOverlay = document.getElementById("modalOverlay");
@@ -895,10 +951,29 @@
                     setTimeout(() => {
                         loadingMask.style.display = "none";
                         mainContent.classList.add("visible");
+                        
+                        // 修正/新增：載入完成後，讓靜音按鈕優雅地淡入顯示
+                        audioToggleBtn.classList.add("visible");
                     }, 800);
                 }, 1500);
             }
         }, 50);
+
+        /* ================= */
+        /* 新增：靜音按鈕點擊事件 */
+        /* ================= */
+        audioToggleBtn.addEventListener("click", () => {
+            bgMusic.muted = !bgMusic.muted;
+            
+            // 依據靜音狀態切換不同的 SVG 圖示
+            if (bgMusic.muted) {
+                audioIcon.innerHTML = iconMutedPath;
+                audioToggleBtn.setAttribute("title", "取消靜音");
+            } else {
+                audioIcon.innerHTML = iconPlayingPath;
+                audioToggleBtn.setAttribute("title", "靜音背景音樂");
+            }
+        });
 
         /* ================= */
         /* 圖鑑卡片渲染 */
@@ -923,6 +998,10 @@
             <div class="card-info">
                 <h4 class="card-title">${creature.name}</h4>
                 <p class="card-desc">${creature.desc}</p>
+                <div class="view-more-hint">
+                    <span>查看傳說</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
             </div>
         `;
 
@@ -989,6 +1068,7 @@
         };
 
         const closeCreatureModal = () => {
+            modalOverlay.classList.remove("remove"); // 這裡原為錯誤代碼（應為 remove 改用下方正確寫法）
             modalOverlay.classList.remove("open");
         };
 
