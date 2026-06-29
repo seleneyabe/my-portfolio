@@ -290,6 +290,7 @@
         </div>
         <button class="btn btn-primary" onclick="initGame()">重新對局</button>
         <button class="btn" id="undo-btn" onclick="undoMove()">悔棋</button>
+        <button class="btn" id="mute-btn" onclick="toggleMute()">音樂：開 🎵</button>
     </div>
 </div>
 
@@ -335,6 +336,7 @@
     const statusText = document.getElementById('status');
     const resultOverlay = document.getElementById('result-overlay');
     const undoBtn = document.getElementById('undo-btn');
+    const muteBtn = document.getElementById('mute-btn'); // 新增：獲取靜音按鈕
     
     // 取得音效元素
     const bgm = document.getElementById('bgm');
@@ -351,6 +353,7 @@
     let count = 0;
     let myWin = [];
     let computerWin = [];
+    let isMuted = false; // 新增：靜音狀態變數
 
     // 背景音樂播放控制（處理瀏覽器自動播放阻擋）
     function startBGM() {
@@ -359,6 +362,23 @@
                 bgm.play();
             }, { once: true });
         });
+    }
+
+    // 新增：切換靜音功能
+    function toggleMute() {
+        isMuted = !isMuted;
+        bgm.muted = isMuted; // 控制背景音樂靜音
+        
+        // 如果你也希望落子等音效一併靜音，可以把下面三行註解拿掉：
+        // clickSfx.muted = isMuted;
+        // winSfx.muted = isMuted;
+        // loseSfx.muted = isMuted;
+
+        if (isMuted) {
+            muteBtn.innerText = "音樂：關 🔇";
+        } else {
+            muteBtn.innerText = "音樂：開 🎵";
+        }
     }
 
     // 初始化贏法陣列 (只需運行一次)
