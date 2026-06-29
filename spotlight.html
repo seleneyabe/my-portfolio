@@ -374,6 +374,9 @@
     <div class="spotlight" id="spotlight"></div>
 
     <script>
+        // === 自訂音效初始化：路徑保留為 ./sounds/cat.mp3 ===
+        const meowSound = new Audio('./sounds/cat.mp3');
+
         const cats = document.querySelectorAll('.cat-container');
         const scoreEl = document.getElementById('score');
         const lightBtn = document.getElementById('lightBtn');
@@ -564,6 +567,11 @@
         function catchCat(e, cat) {
             if (cat.classList.contains('cat-caught')) return;
             e.stopPropagation();
+
+            // 播放點擊音效
+            meowSound.currentTime = 0;
+            meowSound.play().catch(err => console.log('音效播放失敗，請檢查檔案是否存在:', err));
+
             score++;
             scoreEl.textContent = score;
             cat.classList.remove('cat-idle', 'spotted');
