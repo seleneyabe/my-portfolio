@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>秋楓五子棋 | Gomoku Japanese Style</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght=300;500;700&display=swap');
 
         :root {
             /* 日式傳統色彩 */
@@ -138,8 +138,7 @@
             cursor: pointer;
         }
 
-        /* 勝負顯示層 (詩意印章風格) */
-/* 勝負顯示層 (2x2 詩意印章風格) */
+        /* 勝負顯示層 (2x2 詩意印章風格) */
         #result-overlay {
             position: absolute;
             top: 50%;
@@ -263,7 +262,11 @@
 </head>
 <body>
 
-<!-- 飄落的楓葉背景 -->
+<audio id="bgm" src="./sounds/five.mp3" loop></audio>
+<audio id="click-sfx" src="./sounds/click.mp3"></audio>
+<audio id="win-sfx" src="./sounds/fiveWin.mp3"></audio>
+<audio id="lose-sfx" src="./sounds/fiveLose.mp3"></audio>
+
 <div id="leaves-container"></div>
 
 <div class="container">
@@ -333,6 +336,12 @@
     const resultOverlay = document.getElementById('result-overlay');
     const undoBtn = document.getElementById('undo-btn');
     
+    // 取得音效元素
+    const bgm = document.getElementById('bgm');
+    const clickSfx = document.getElementById('click-sfx');
+    const winSfx = document.getElementById('win-sfx');
+    const loseSfx = document.getElementById('lose-sfx');
+    
     let chessBoard = [];
     let me = true; // 玩家是否落子
     let playerColor = 1; // 1:黑, 2:白
@@ -342,6 +351,15 @@
     let count = 0;
     let myWin = [];
     let computerWin = [];
+
+    // 背景音樂播放控制（處理瀏覽器自動播放阻擋）
+    function startBGM() {
+        bgm.play().catch(() => {
+            document.addEventListener('click', () => {
+                bgm.play();
+            }, { once: true });
+        });
+    }
 
     // 初始化贏法陣列 (只需運行一次)
     function initWinLogic() {
@@ -392,6 +410,7 @@
         statusText.innerText = side === 'black' ? "您的回合 (執黑)" : "電腦沉思中...";
         
         drawBoard();
+        startBGM(); // 嘗試啟動背景音樂
         
         if (side === 'black') {
             me = true;
@@ -419,7 +438,7 @@
             context.stroke();
         }
 
-        // 畫天元與星位 (圍棋/五子棋傳統的黑點)
+        // 畫天元與星位
         const stars = [
             [3, 3], [11, 3], [3, 11], [11, 11], [7, 7]
         ];
@@ -434,7 +453,6 @@
     function drawPiece(i, j, isBlack) {
         context.beginPath();
         context.arc(15 + i * 30, 15 + j * 30, 13, 0, 2 * Math.PI);
-        // 使棋子具有玉石或和風啞光的漸層質感
         let g = context.createRadialGradient(15+i*30+3, 15+j*30-3, 13, 15+i*30+3, 15+j*30-3, 0);
         if (isBlack) {
             g.addColorStop(0, "#2c2c2c");
@@ -446,13 +464,12 @@
         context.fillStyle = g;
         context.fill();
         
-        // 加上微小的陰影增強立體感
         context.shadowColor = 'rgba(0, 0, 0, 0.3)';
         context.shadowBlur = 4;
         context.shadowOffsetX = 2;
         context.shadowOffsetY = 2;
         context.fill();
-        context.shadowColor = 'transparent'; // 重置陰影避免影響畫線
+        context.shadowColor = 'transparent'; 
     }
 
     canvas.onclick = function(e) {
@@ -465,17 +482,19 @@
             if (!over) {
                 me = false;
                 statusText.innerText = "電腦沉思中...";
-                setTimeout(computerAI, 500); // 加入微小延遲讓電腦感覺在「思考」
+                setTimeout(computerAI, 500);
             }
         }
     };
 
     function step(i, j, isPlayer) {
+        clickSfx.currentTime = 0;
+        clickSfx.play().catch(e => console.log("音效播放失敗:", e));
+
         const isBlack = (isPlayer && playerColor === 1) || (!isPlayer && playerColor === 2);
         drawPiece(i, j, isBlack);
         chessBoard[i][j] = isPlayer ? 1 : 2;
         
-        // 紀錄歷史
         history.push({
             i, j, isPlayer, 
             myWinBefore: [...myWin], 
@@ -501,7 +520,6 @@
     function undoMove() {
         if (history.length < 2 || over) return;
 
-        // 退回兩次 (電腦一次 + 玩家一次)
         for(let n = 0; n < 2; n++) {
             let last = history.pop();
             chessBoard[last.i][last.j] = 0;
@@ -509,7 +527,6 @@
             computerWin = last.compWinBefore;
         }
 
-        // 重繪棋盤與剩餘棋子
         drawBoard();
         for(let i=0; i<15; i++) {
             for(let j=0; j<15; j++) {
@@ -532,12 +549,20 @@
         undoBtn.disabled = history.length < 2 || over;
     }
 
-function showEnd(msg) {
+    function showEnd(msg) {
         over = true;
         
-        // 透過 <br> 斷行，配合 vertical-rl 自動形成「右欄先、左欄後」的 2x2 排版
+        // --- 新增：播放對應的勝負音效 ---
+        if (msg === "WIN") {
+            winSfx.currentTime = 0;
+            winSfx.play().catch(e => console.log("勝利音效播放失敗:", e));
+        } else {
+            loseSfx.currentTime = 0;
+            loseSfx.play().catch(e => console.log("失敗音效播放失敗:", e));
+        }
+        
         const text = msg === "WIN" ? "大獲<br>全勝" : "遺憾<br>敗北";
-        resultOverlay.innerHTML = text; // 注意這裡改成 innerHTML
+        resultOverlay.innerHTML = text; 
         
         resultOverlay.style.color = msg === "WIN" ? "var(--win-color)" : "var(--lose-color)";
         resultOverlay.style.borderColor = msg === "WIN" ? "var(--win-color)" : "var(--lose-color)";
